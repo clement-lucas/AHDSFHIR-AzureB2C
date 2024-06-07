@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { useIsAuthenticated } from "@azure/msal-react";
+import { useMsalAuth } from "./useMsalAuth";
+import PatientData from "./PatientData";
 
-function App() {
+const App = () => {
+  const isAuthenticated = useIsAuthenticated();
+  const { login, logout } = useMsalAuth();
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>Azure B2C FHIR React App</h1>
+        {isAuthenticated ? (
+          <div>
+            <button onClick={logout}>Logout</button>
+            <PatientData />
+          </div>
+        ) : (
+          <button onClick={login}>Login</button>
+        )}
       </header>
     </div>
   );
-}
+};
 
-export default App;
+export default App;  

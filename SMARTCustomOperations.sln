@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16  
 VisualStudioVersion = 16.0.31025.194  
 MinimumVisualStudioVersion = 10.0.40219.1  
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientwebapp", "src\\patientwebapp\\patientwebapp.esproj", "{3a54a486-0fc3-4068-a154-90a3970ecaf5}"  
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientwebapp", "src\\patientwebapp\\patientwebapp.csproj", "{3a54a486-0fc3-4068-a154-90a3970ecaf5}"  
 EndProject  
 Global  
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution  
