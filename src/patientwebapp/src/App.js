@@ -10,7 +10,7 @@ const App = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Azure B2C FHIR React App</h1>
+        <h1>Azure B2C SMART on FHIR sample</h1>
         {isAuthenticated ? (
           <div>
             <button onClick={logout}>Logout</button>
