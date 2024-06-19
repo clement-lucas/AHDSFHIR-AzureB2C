@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35004.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientwebapp", "src\Frontend\patientwebapp\patientwebapp.csproj", "{3A54A486-0FC3-4068-A154-90A3970ECAF5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{362B37A2-7807-4310-8894-94237246C78D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzureFunctions", "AzureFunctions", "{DE23A338-2923-4771-A298-5F3EF9740CB6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HL-AHDSFHIR-DBWrapperFunction", "src\AzureFunctions\HL-AHDSFHIR-DBWrapperFunction\HL-AHDSFHIR-DBWrapperFunction.csproj", "{D8399660-2591-463C-8037-6DC26FDFABC1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{E53D0364-39DD-4C9B-921A-00BC8E8E296D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A54A486-0FC3-4068-A154-90A3970ECAF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A54A486-0FC3-4068-A154-90A3970ECAF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A54A486-0FC3-4068-A154-90A3970ECAF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A54A486-0FC3-4068-A154-90A3970ECAF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8399660-2591-463C-8037-6DC26FDFABC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8399660-2591-463C-8037-6DC26FDFABC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8399660-2591-463C-8037-6DC26FDFABC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8399660-2591-463C-8037-6DC26FDFABC1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3A54A486-0FC3-4068-A154-90A3970ECAF5} = {E53D0364-39DD-4C9B-921A-00BC8E8E296D}
+		{DE23A338-2923-4771-A298-5F3EF9740CB6} = {362B37A2-7807-4310-8894-94237246C78D}
+		{D8399660-2591-463C-8037-6DC26FDFABC1} = {DE23A338-2923-4771-A298-5F3EF9740CB6}
+		{E53D0364-39DD-4C9B-921A-00BC8E8E296D} = {362B37A2-7807-4310-8894-94237246C78D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AC354D41-C207-483E-A367-4FE4FDB68C2F}
+	EndGlobalSection
+EndGlobal

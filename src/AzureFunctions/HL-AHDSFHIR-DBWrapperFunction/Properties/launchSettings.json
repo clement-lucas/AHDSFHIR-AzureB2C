@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "HL_AHDSFHIR_DBWrapperFunction": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7226",
+      "launchBrowser": false
+    }
+  }
+}
