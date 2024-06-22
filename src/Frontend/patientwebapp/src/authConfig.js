@@ -9,7 +9,7 @@ export const msalConfig = {
             "https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com",
             "https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1_userflow_sign-up_sign-in"
         ],
-        redirectUri: "https://wonderful-island-0a2864600-preview.eastasia.5.azurestaticapps.net",
+        //redirectUri: "https://wonderful-island-0a2864600-preview.eastasia.5.azurestaticapps.net",
         redirectUri: returnURL,
         //postLogoutRedirectUri: "https://wonderful-island-0a2864600-preview.eastasia.5.azurestaticapps.net",
     },

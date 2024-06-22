@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "HL_AHDSFHIR_AuthHandlerFunction": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7170",
+      "launchBrowser": false
+    }
+  }
+}

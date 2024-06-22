@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3A54A486-0FC3-4068-A154-90A3970ECAF5}|src\\Frontend\\patientwebapp\\patientwebapp.csproj|c:\\users\\mtamizharasa\\source\\repos\\hl-ahdsfhir-azureb2c\\src\\frontend\\patientwebapp\\src\\authconfig.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{3A54A486-0FC3-4068-A154-90A3970ECAF5}|src\\Frontend\\patientwebapp\\patientwebapp.csproj|solutionrelative:src\\frontend\\patientwebapp\\src\\authconfig.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{2C8418CA-8222-4F44-868F-ABAD2DEDD562}|src\\AzureFunctions\\HL-AHDSFHIR-AuthHandlerFunction\\HL-AHDSFHIR-AuthHandlerFunction.csproj|c:\\users\\mtamizharasa\\source\\repos\\hl-ahdsfhir-azureb2c\\src\\azurefunctions\\hl-ahdsfhir-authhandlerfunction\\function1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C8418CA-8222-4F44-868F-ABAD2DEDD562}|src\\AzureFunctions\\HL-AHDSFHIR-AuthHandlerFunction\\HL-AHDSFHIR-AuthHandlerFunction.csproj|solutionrelative:src\\azurefunctions\\hl-ahdsfhir-authhandlerfunction\\function1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50899FD9-43F1-4DD4-BEF8-16BC9A150845}|src\\Frontend\\patientwebapp\\patientwebapp.esproj|c:\\users\\mtamizharasa\\source\\repos\\hl-ahdsfhir-azureb2c\\src\\frontend\\patientwebapp\\.env||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{50899FD9-43F1-4DD4-BEF8-16BC9A150845}|src\\Frontend\\patientwebapp\\patientwebapp.esproj|solutionrelative:src\\frontend\\patientwebapp\\.env||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50899FD9-43F1-4DD4-BEF8-16BC9A150845}|src\\Frontend\\patientwebapp\\patientwebapp.esproj|c:\\users\\mtamizharasa\\source\\repos\\hl-ahdsfhir-azureb2c\\src\\frontend\\patientwebapp\\swa-cli.config.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{50899FD9-43F1-4DD4-BEF8-16BC9A150845}|src\\Frontend\\patientwebapp\\patientwebapp.esproj|solutionrelative:src\\frontend\\patientwebapp\\swa-cli.config.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D8399660-2591-463C-8037-6DC26FDFABC1}|src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\HL-AHDSFHIR-DBWrapperFunction.csproj|c:\\users\\mtamizharasa\\source\\repos\\hl-ahdsfhir-azureb2c\\src\\azurefunctions\\hl-ahdsfhir-dbwrapperfunction\\hlahdsfhirdbwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D8399660-2591-463C-8037-6DC26FDFABC1}|src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\HL-AHDSFHIR-DBWrapperFunction.csproj|solutionrelative:src\\azurefunctions\\hl-ahdsfhir-dbwrapperfunction\\hlahdsfhirdbwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8399660-2591-463C-8037-6DC26FDFABC1}|src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\HL-AHDSFHIR-DBWrapperFunction.csproj|c:\\users\\mtamizharasa\\source\\repos\\hl-ahdsfhir-azureb2c\\src\\azurefunctions\\hl-ahdsfhir-dbwrapperfunction\\local.settings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{D8399660-2591-463C-8037-6DC26FDFABC1}|src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\HL-AHDSFHIR-DBWrapperFunction.csproj|solutionrelative:src\\azurefunctions\\hl-ahdsfhir-dbwrapperfunction\\local.settings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,50 +26,64 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "authConfig.js",
-              "DocumentMoniker": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\Frontend\\patientwebapp\\src\\authConfig.js",
-              "RelativeDocumentMoniker": "src\\Frontend\\patientwebapp\\src\\authConfig.js",
-              "ToolTip": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\Frontend\\patientwebapp\\src\\authConfig.js",
-              "RelativeToolTip": "src\\Frontend\\patientwebapp\\src\\authConfig.js",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAGAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2024-06-18T06:07:29.159Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "local.settings.json",
-              "DocumentMoniker": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\local.settings.json",
-              "RelativeDocumentMoniker": "src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\local.settings.json",
-              "ToolTip": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\local.settings.json",
-              "RelativeToolTip": "src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\local.settings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-06-18T04:15:06.737Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": ".env",
+              "DocumentMoniker": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\Frontend\\patientwebapp\\.env",
+              "RelativeDocumentMoniker": "src\\Frontend\\patientwebapp\\.env",
+              "ToolTip": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\Frontend\\patientwebapp\\.env",
+              "RelativeToolTip": "src\\Frontend\\patientwebapp\\.env",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAEAAAA0AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-06-22T04:45:28.958Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "swa-cli.config.json",
+              "DocumentMoniker": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\Frontend\\patientwebapp\\swa-cli.config.json",
+              "RelativeDocumentMoniker": "src\\Frontend\\patientwebapp\\swa-cli.config.json",
+              "ToolTip": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\Frontend\\patientwebapp\\swa-cli.config.json",
+              "RelativeToolTip": "src\\Frontend\\patientwebapp\\swa-cli.config.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-06-22T04:45:13.792Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Function1.cs",
+              "DocumentMoniker": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\AzureFunctions\\HL-AHDSFHIR-AuthHandlerFunction\\Function1.cs",
+              "RelativeDocumentMoniker": "src\\AzureFunctions\\HL-AHDSFHIR-AuthHandlerFunction\\Function1.cs",
+              "ToolTip": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\AzureFunctions\\HL-AHDSFHIR-AuthHandlerFunction\\Function1.cs",
+              "RelativeToolTip": "src\\AzureFunctions\\HL-AHDSFHIR-AuthHandlerFunction\\Function1.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-22T04:31:22.193Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "HLAHDSFHIRDBWrapper.cs",
               "DocumentMoniker": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\HLAHDSFHIRDBWrapper.cs",
               "RelativeDocumentMoniker": "src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\HLAHDSFHIRDBWrapper.cs",
               "ToolTip": "C:\\Users\\mtamizharasa\\source\\repos\\HL-AHDSFHIR-AzureB2C\\src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\HLAHDSFHIRDBWrapper.cs",
               "RelativeToolTip": "src\\AzureFunctions\\HL-AHDSFHIR-DBWrapperFunction\\HLAHDSFHIRDBWrapper.cs",
-              "ViewState": "AQIAAC8AAAAAAAAAAAAcwEQAAAANAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-13T23:13:36.503Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-22T04:28:32.373Z"
             }
           ]
         }
