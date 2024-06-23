@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+import { InteractionRequiredAuthError } from '@azure/msal-browser';
 
-const facilityCodes = ["FacilityA", "FacilityB"]; // Hardcoded facility codes  
+const facilityCodes = ["aaa", "bbb"]; // Hardcoded facility codes  
 
 const MainContent = () => {
     const { instance, accounts } = useMsal();
@@ -22,7 +23,6 @@ const MainContent = () => {
         setLoading(true);
         setError(null);
         const userTokens = [];
-
         try {
             for (const code of facilityCodes) {
                 const token = await getFHIRUserToken(code);
@@ -30,12 +30,10 @@ const MainContent = () => {
                 const fhirUserUrl = decodedToken.extension_fhirUser;
                 userTokens.push({ facilityCode: code, token, fhirUserUrl });
             }
-
-            // Fetch patient data from each FHIR service  
+            // Fetch patient data from each FHIR service   
             const patientDetailsPromises = userTokens.map(({ facilityCode, token, fhirUserUrl }) =>
                 fetchPatientDetails(fhirUserUrl, token)
             );
-
             const patientDetails = await Promise.all(patientDetailsPromises);
             setPatientData(patientDetails);
         } catch (err) {
@@ -47,15 +45,14 @@ const MainContent = () => {
 
     const getFHIRUserToken = async (facilityCode) => {
         const request = {
-            scopes: ["https://<your-tenant>.onmicrosoft.com/<your-api>/user_impersonation"],
+            scopes: ["https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation"],
             extraQueryParameters: { facility_code: facilityCode }
         };
-
         try {
             const response = await instance.acquireTokenSilent(request);
             return response.accessToken;
         } catch (e) {
-            if (e instanceof msal.InteractionRequiredAuthError) {
+            if (e instanceof InteractionRequiredAuthError) {
                 const response = await instance.acquireTokenRedirect(request);
                 return response.accessToken;
             } else {
