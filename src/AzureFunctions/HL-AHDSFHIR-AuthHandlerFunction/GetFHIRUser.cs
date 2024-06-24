@@ -30,18 +30,22 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
             // Parse the request body as a JSON object  
             JObject data = JObject.Parse(requestBody);
 
-            if (data == null)
-            {
-                return new BadRequestObjectResult("Invalid parameters.");
-            }
+
 
             // Extract objectId from the request body  
             var reqObjectId = data["objectId"]?.ToString();
             var reqFacilityCode = data["facilityCode"]?.ToString();
 
-            if (string.IsNullOrEmpty(reqObjectId) || string.IsNullOrEmpty(reqFacilityCode))
+            if (data == null || string.IsNullOrEmpty(reqObjectId) || string.IsNullOrEmpty(reqFacilityCode))
             {
-                return new BadRequestObjectResult("Missing required parameters.");
+                var dummyRresult = new
+                {
+                    facilityCode = "",
+                    fhirUser = ""
+                };
+                logger.LogInformation("Returning dummy result: {dummyRresult}", dummyRresult);
+
+                return new OkObjectResult(dummyRresult);
             }
 
             var connectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");

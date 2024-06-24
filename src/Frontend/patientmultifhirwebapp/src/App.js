@@ -1,8 +1,8 @@
 // src/App.js  
-import React, { useState } from 'react';
-import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
-import { useMsal } from '@azure/msal-react';
-import { loginRequest } from './authConfig';
+
+import React, { useState, useEffect } from 'react';
+import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
+import { loginRequest, msalConfig } from './authConfig';
 import axios from 'axios';
 import PatientInfo from './PatientInfo';
 import Loader from './Loader'; // Import the Loader component  
@@ -15,6 +15,8 @@ const App = () => {
     const [patientData, setPatientData] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false); // State for loader  
+    const [refreshToken, setRefreshToken] = useState(null); // State for refresh token  
+    const [selectedFacility, setSelectedFacility] = useState(null); // State for selected facility  
 
     const handleLogin = () => {
         instance.loginRedirect(loginRequest).catch(e => {
@@ -30,8 +32,10 @@ const App = () => {
 
     const handleFacilitySelect = async (facility) => {
         setLoading(true); // Show loader  
+        setSelectedFacility(facility); // Store selected facility  
         try {
-            const accessToken = await getAccessToken();
+            const { accessToken, refreshToken } = await getAccessToken(facility, accounts[0].idTokenClaims.sub);
+            setRefreshToken(refreshToken); // Store refresh token  
             const fhirUrl = await getFhirUserUrl(facility, accounts[0].idTokenClaims.sub, accessToken);
             fetchPatientData(fhirUrl, accessToken);
         } catch (e) {
@@ -41,18 +45,23 @@ const App = () => {
         }
     };
 
-    const getAccessToken = () => {
+    const getAccessToken = (facilityCode, objectId) => {
         return new Promise((resolve, reject) => {
             if (accounts.length > 0) {
                 const account = accounts[0];
                 const tokenRequest = {
                     scopes: loginRequest.scopes,
                     account: account,
+                    extraQueryParameters: {
+                        facilityCode: facilityCode,
+                        objectId: objectId
+                    }
                 };
                 instance.acquireTokenSilent(tokenRequest)
                     .then(response => {
                         console.log('Access Token:', response.accessToken);
-                        resolve(response.accessToken);
+                        console.log('Refresh Token:', response.refreshToken);
+                        resolve({ accessToken: response.accessToken, refreshToken: response.refreshToken });
                     })
                     .catch(e => {
                         console.error('Silent token acquisition failed. Acquiring token using redirect.');
@@ -66,8 +75,7 @@ const App = () => {
                 reject(new Error('No accounts found'));
             }
         });
-    };  
-
+    };
 
     const getFhirUserUrl = (facilityCode, objectId, accessToken) => {
         const url = 'https://smart-on-fhir-authhandler-func.azurewebsites.net/api/GetFHIRUser?code=Bs_8tOyRCsj_98OeGjw-KoZJJ_aG8kvWHK0LvawiW7XSAzFuPZTOVg%3D%3D';
@@ -89,8 +97,7 @@ const App = () => {
             setLoading(false); // Hide loader in case of error  
             throw error;
         });
-    };  
-
+    };
 
     const fetchPatientData = (fhirUrl, accessToken) => {
         axios.get(fhirUrl, {
@@ -104,14 +111,51 @@ const App = () => {
                 setError(null);
                 setLoading(false); // Hide loader after data is fetched  
             })
-            .catch(error => {
+            .catch(async error => {
                 console.error('Error fetching patient data:', error);
-                setError('An error occurred while fetching patient data. Please try again.');
-                setPatientData(null); // Clear patient data on error  
-                setLoading(false); // Hide loader in case of error  
+                if (error.response && error.response.status === 403) {
+                    // Token might be expired, try refreshing it  
+                    try {
+                        const newAccessToken = await refreshAccessToken(refreshToken);
+                        const fhirUrl = await getFhirUserUrl(selectedFacility, accounts[0].idTokenClaims.sub, newAccessToken);
+                        fetchPatientData(fhirUrl, newAccessToken);
+                    } catch (refreshError) {
+                        console.error('Error refreshing token:', refreshError);
+                        setError('An error occurred while fetching patient data. Please try again.');
+                        setPatientData(null); // Clear patient data on error  
+                        setLoading(false); // Hide loader in case of error  
+                    }
+                } else {
+                    setError('An error occurred while fetching patient data. Please try again.');
+                    setPatientData(null); // Clear patient data on error  
+                    setLoading(false); // Hide loader in case of error  
+                }
             });
-    };  
+    };
 
+    const refreshAccessToken = (refreshToken) => {
+        const url = `https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/token`;
+        const requestBody = new URLSearchParams({
+            grant_type: 'refresh_token',
+            client_id: msalConfig.auth.clientId,
+            scope: 'openid offline_access',
+            refresh_token: refreshToken,
+            redirect_uri: msalConfig.auth.redirectUri
+        });
+
+        return axios.post(url, requestBody, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(response => {
+            console.log('Refreshed Access Token:', response.data.access_token);
+            setRefreshToken(response.data.refresh_token); // Update the refresh token if it's included in the response  
+            return response.data.access_token;
+        }).catch(error => {
+            console.error('Error refreshing access token:', error);
+            throw error;
+        });
+    };
 
     return (
         <div className="App">
@@ -151,5 +195,4 @@ const App = () => {
     );
 };
 
-export default App;  
-
+export default App;
