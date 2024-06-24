@@ -23,7 +23,12 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
 
             // Read the request body  
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var data = JObject.Parse(requestBody);
+
+            // Log the request body data  
+            logger.LogInformation("Request Body: {RequestBody}", requestBody);
+
+            // Parse the request body as a JSON object  
+            JObject data = JObject.Parse(requestBody);
 
             if (data == null)
             {
@@ -31,7 +36,7 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
             }
 
             // Extract objectId from the request body  
-            var reqObjectId = data["sub"]?.ToString();
+            var reqObjectId = data["objectId"]?.ToString();
             var reqFacilityCode = data["facilityCode"]?.ToString();
 
             if (string.IsNullOrEmpty(reqObjectId) || string.IsNullOrEmpty(reqFacilityCode))
@@ -84,8 +89,8 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
             // Construct the result  
             var result = new
             {
-                version = "1.0.0",
-                action = "Continue",
+                //version = "1.0.0",
+                //action = "Continue",
                 facilityCode = resFacilityCode, // custom claim  
                 fhirUser = resFHIRServiceUrl + "/" + resPatientResourceId // custom claim  
             };
