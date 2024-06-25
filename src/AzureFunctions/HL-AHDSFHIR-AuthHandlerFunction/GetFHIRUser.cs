@@ -35,6 +35,9 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
             // Extract objectId from the request body  
             var reqObjectId = data["objectId"]?.ToString();
             var reqFacilityCode = data["facilityCode"]?.ToString();
+            var trigerringClient = data["trigerringClient"]?.ToString();
+
+            logger.LogInformation("Web API call trigerred from: {trigerringClient}", trigerringClient);
 
             if (data == null || string.IsNullOrEmpty(reqObjectId) || string.IsNullOrEmpty(reqFacilityCode))
             {
@@ -98,6 +101,8 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                 facilityCode = resFacilityCode, // custom claim  
                 fhirUser = resFHIRServiceUrl + "/" + resPatientResourceId // custom claim  
             };
+
+            logger.LogInformation("Response Body: {result}", result);
 
             return new OkObjectResult(result);
         }

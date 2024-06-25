@@ -4,15 +4,15 @@
     <PackageJsonName Condition="$(PackageJsonName) == ''">patientmultifhirwebapp</PackageJsonName>
     <PackageJsonVersion Condition="$(PackageJsonVersion) == ''">0.1.0</PackageJsonVersion>
     <PackageJsonPrivate Condition="$(PackageJsonPrivate) == ''">true</PackageJsonPrivate>
-    <PackageJsonDependenciesAzureMsalBrowser Condition="$(PackageJsonDependenciesAzureMsalBrowser) == ''">^3.17.0</PackageJsonDependenciesAzureMsalBrowser>
-    <PackageJsonDependenciesAzureMsalReact Condition="$(PackageJsonDependenciesAzureMsalReact) == ''">^2.0.19</PackageJsonDependenciesAzureMsalReact>
     <PackageJsonDependenciesTestingLibraryJestDom Condition="$(PackageJsonDependenciesTestingLibraryJestDom) == ''">^5.17.0</PackageJsonDependenciesTestingLibraryJestDom>
     <PackageJsonDependenciesTestingLibraryReact Condition="$(PackageJsonDependenciesTestingLibraryReact) == ''">^13.4.0</PackageJsonDependenciesTestingLibraryReact>
     <PackageJsonDependenciesTestingLibraryUserEvent Condition="$(PackageJsonDependenciesTestingLibraryUserEvent) == ''">^13.5.0</PackageJsonDependenciesTestingLibraryUserEvent>
     <PackageJsonDependenciesAxios Condition="$(PackageJsonDependenciesAxios) == ''">^1.7.2</PackageJsonDependenciesAxios>
     <PackageJsonDependenciesJwtDecode Condition="$(PackageJsonDependenciesJwtDecode) == ''">^4.0.0</PackageJsonDependenciesJwtDecode>
+    <PackageJsonDependenciesOidcClient Condition="$(PackageJsonDependenciesOidcClient) == ''">^1.11.5</PackageJsonDependenciesOidcClient>
     <PackageJsonDependenciesReact Condition="$(PackageJsonDependenciesReact) == ''">^18.3.1</PackageJsonDependenciesReact>
     <PackageJsonDependenciesReactDom Condition="$(PackageJsonDependenciesReactDom) == ''">^18.3.1</PackageJsonDependenciesReactDom>
+    <PackageJsonDependenciesReactRouterDom Condition="$(PackageJsonDependenciesReactRouterDom) == ''">^6.23.1</PackageJsonDependenciesReactRouterDom>
     <PackageJsonDependenciesReactScripts Condition="$(PackageJsonDependenciesReactScripts) == ''">5.0.1</PackageJsonDependenciesReactScripts>
     <PackageJsonDependenciesWebVitals Condition="$(PackageJsonDependenciesWebVitals) == ''">^2.1.4</PackageJsonDependenciesWebVitals>
     <PackageJsonScriptsStart Condition="$(PackageJsonScriptsStart) == ''">react-scripts start</PackageJsonScriptsStart>
