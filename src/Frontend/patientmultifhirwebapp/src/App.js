@@ -1,3 +1,5 @@
+// src/App.js
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import userManager from './authConfig';
@@ -104,9 +106,9 @@ const App = () => {
         const requestBody = new URLSearchParams({
             grant_type: 'refresh_token',
             client_id: "661862bb-946b-4580-8bec-b7ae75905ab6",
-            scope: 'openid offline_access https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation',
+            scope: 'openid offline_access https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.all.read',
             refresh_token: refreshToken,
-            redirect_uri: "http://localhost:3000/callback", // Updated redirect URI  
+            redirect_uri: "https://green-sea-0cde26500.5.azurestaticapps.net/callback", // Updated redirect URI  
             objectId: objectId, // Added objectId  
             facilityCode: facilityCode // Added facilityCode  
         });
@@ -168,5 +170,5 @@ const App = () => {
     );
 };
 
-export default App;  
+export default App;
 
