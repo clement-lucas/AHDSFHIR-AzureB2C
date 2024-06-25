@@ -1,5 +1,3 @@
-// src/App.js
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import userManager from './authConfig';
@@ -7,6 +5,7 @@ import Callback from './Callback';
 import axios from 'axios';
 import PatientInfo from './PatientInfo';
 import Loader from './Loader';
+import { jwtDecode } from 'jwt-decode';
 import './styles.css';
 
 const facilities = ['1001', '1002', '1003', '1004'];
@@ -27,12 +26,10 @@ const App = () => {
             setRefreshToken(user.refresh_token);
             setAccessToken(user.access_token);
         });
-
         userManager.events.addUserUnloaded(() => {
             console.log('User unloaded');
             setUser(null);
         });
-
         userManager.getUser().then(user => {
             if (user) {
                 console.log('User:', user);
@@ -59,53 +56,32 @@ const App = () => {
         try {
             const user = await userManager.getUser();
             if (user) {
-                const fhirUrl = await getFhirUserUrl(facility, user.profile.sub, accessToken);
-                fetchPatientData(fhirUrl, accessToken, user, facility); // Pass facility directly  
+                fetchPatientData(accessToken, user, facility); // Pass facility directly  
             }
         } catch (e) {
             console.error('Error:', e);
             setError('An error occurred while selecting the facility. Please try again.');
             setLoading(false);
         }
-    };  
-
-
-    const getFhirUserUrl = (facilityCode, objectId, accessToken) => {
-        const url = 'https://smart-on-fhir-authhandler-func.azurewebsites.net/api/GetFHIRUser?code=Bs_8tOyRCsj_98OeGjw-KoZJJ_aG8kvWHK0LvawiW7XSAzFuPZTOVg%3D%3D';
-        const requestBody = {
-            facilityCode: facilityCode,
-            objectId: objectId,
-            trigerringClient: "PatientApp"
-        };
-        return axios.post(url, requestBody, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            return response.data.fhirUser;
-        }).catch(error => {
-            console.error('Error fetching FHIR user URL:', error);
-            setError('An error occurred while fetching the FHIR user URL. Please try again.');
-            setPatientData(null);
-            setLoading(false);
-            throw error;
-        });
     };
 
-    const fetchPatientData = async (fhirUrl, accessToken, user, facility) => {
+    const fetchPatientData = async (accessToken, user, facility) => {
         setLoading(true); // Show loader when data fetching starts  
         try {
             // Refresh the access token first  
             const refreshedAccessToken = await refreshAccessToken(refreshToken, user.profile.sub, facility);
-
+            // Decode the refreshed access token to get the fhirUrl  
+            const decodedToken = jwtDecode(refreshedAccessToken);
+            const fhirUrl = decodedToken.fhirUser;
+            if (!fhirUrl) {
+                throw new Error('FHIR URL not found in token');
+            }
             // Use the refreshed access token to fetch the FHIR data  
             const response = await axios.get(fhirUrl, {
                 headers: {
                     Authorization: `Bearer ${refreshedAccessToken}`,
                 },
             });
-
             console.log('Patient Data:', response.data);
             setPatientData(response.data);
             setError(null);
@@ -113,7 +89,7 @@ const App = () => {
             console.error('Error fetching patient data:', error);
             if (error.response && error.response.status === 403) {
                 // Handle the case where the refreshed token is also not valid  
-                setError('An error occurred while fetching patient data. Please try again.');
+                setError('An error occurred while fetching patient data. Looks like Access token claim issue. Please try again.');
             } else {
                 setError('An error occurred while fetching patient data. Please try again.');
             }
@@ -121,8 +97,7 @@ const App = () => {
         } finally {
             setLoading(false); // Hide loader after data is fetched or in case of error  
         }
-    };  
-
+    };
 
     const refreshAccessToken = (refreshToken, objectId, facilityCode) => {
         const url = `https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/token`;
@@ -135,7 +110,6 @@ const App = () => {
             objectId: objectId, // Added objectId  
             facilityCode: facilityCode // Added facilityCode  
         });
-
         return axios.post(url, requestBody, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -149,9 +123,7 @@ const App = () => {
             console.error('Error refreshing access token:', error);
             throw error;
         });
-    };  
-
-
+    };
 
     return (
         <Router>
@@ -181,7 +153,7 @@ const App = () => {
                         {loading ? (
                             <Loader /> // Show loader when loading  
                         ) : (
-                            <div className="patient-info">  
+                            <div className="patient-info">
                                 <PatientInfo patientData={patientData} />
                             </div>
                         )}
@@ -196,4 +168,5 @@ const App = () => {
     );
 };
 
-export default App;
+export default App;  
+
