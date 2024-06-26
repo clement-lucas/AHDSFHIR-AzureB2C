@@ -49,15 +49,25 @@ const App = () => {
     };
 
     const handleLogout = () => {
+        // Clear the local state  
+        setPatientDataList([]);
+        setAccessTokenList([]);
+        setError(null);
+        setLoading(false);
+        setRefreshToken(null);
+        setUser(null);
+
+        // Perform the logout  
         userManager.signoutRedirect();
     };
 
+
     const fetchAllPatientData = async (refreshToken) => {
         setLoading(true);
+        setError(null); // Clear any previous error  
         try {
             const user = await userManager.getUser();
             if (user) {
-                // Promise.allを使用して並列に処理
                 await Promise.all(facilities.map(
                     facility => fetchPatientData(refreshToken, user, facility)
                 ));
@@ -65,6 +75,8 @@ const App = () => {
         } catch (e) {
             console.error('Error:', e);
             setError('An error occurred while fetching patient data. Please try again.');
+            setPatientDataList([]); // Clear patient data on error  
+            setAccessTokenList([]); // Clear access tokens on error  
         } finally {
             setLoading(false);
         }
@@ -72,77 +84,96 @@ const App = () => {
 
     const fetchPatientData = async (refreshToken, user, facility) => {
         try {
-            // Refresh the access token first  
+            // Refresh the access token first
             const refreshedAccessToken = await refreshAccessToken(refreshToken, user.profile.sub, facility);
-            // Decode the refreshed access token to get the fhirUrl  
+            // Decode the refreshed access token to get the fhirUrl 
             const decodedToken = jwtDecode(refreshedAccessToken);
             const fhirUrl = decodedToken.fhirUser;
+
             if (!fhirUrl) {
                 throw new Error('FHIR URL not found in token');
             }
-            // Use the refreshed access token to fetch the FHIR data  
+            // Use the refreshed access token to fetch the FHIR data
             const response = await axios.get(fhirUrl, {
                 headers: {
                     Authorization: `Bearer ${refreshedAccessToken}`,
                 },
             });
+
             console.log('Patient Data:', response.data);
-
             // Update the AccessTokenList with the refreshed access token
-            accessTokenList[facility] = refreshedAccessToken;
-            setAccessTokenList(accessTokenList);
+            setAccessTokenList(prevAccessTokenList => ({
+                ...prevAccessTokenList,
+                [facility]: refreshedAccessToken
+            }));
+            // Update the PatientDataList with the fetched patient data
+            setPatientDataList(prevPatientDataList => ({
+                ...prevPatientDataList,
+                [facility]: response.data
+            }));
 
-            // Update the patient data for the selected facility
-            patientDataList[facility] = response.data;
-            setPatientDataList(patientDataList);
+            setError(null); // Clear any previous error  
 
-            setError(null);
         } catch (error) {
             console.error('Error fetching patient data:', error);
+
             if (error.response && error.response.status === 403) {
-                // Handle the case where the refreshed token is also not valid  
                 setError('An error occurred while fetching patient data. Looks like Access token claim issue. Please try again.');
             } else {
                 setError('An error occurred while fetching patient data. Please try again.');
             }
 
-            if ('facility' in accessTokenList) {
-                delete accessTokenList['facility'];
-            }
-            setAccessTokenList(accessTokenList);
+            setAccessTokenList(prevAccessTokenList => {
+                const newAccessTokenList = { ...prevAccessTokenList };
+                delete newAccessTokenList[facility];
+                return newAccessTokenList;
+            });
 
-            if ('facility' in patientDataList) {
-                delete patientDataList['facility'];
-            }
-            setPatientDataList(patientDataList);
-
-        } finally {
+            setPatientDataList(prevPatientDataList => {
+                const newPatientDataList = { ...prevPatientDataList };
+                delete newPatientDataList[facility];
+                return newPatientDataList;
+            });
         }
     };
 
-    const refreshAccessToken = (refreshToken, objectId, facilityCode) => {
+    const refreshAccessToken = async (refreshToken, objectId, facilityCode) => {
         const url = appConfig.tokenURL;
+        // Define scopes in an array for better maintainability
+        const scopes = [
+            "openid",
+            "offline_access",
+            // "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/launch",
+            // "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/fhirUser",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Patient.read",
+            // "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation"
+        ];
+        // Join the scopes array into a single string with spaces
+        const scopesString = scopes.join(' ');
+
         const requestBody = new URLSearchParams({
             grant_type: 'refresh_token',
             client_id: appConfig.clientID,
-            scope: appConfig.refreshTokenScope,
+            //scope: appConfig.refreshTokenScope,
+            scope: scopesString, // Use the scopes string instead of the refreshTokenScope
             refresh_token: refreshToken,
             redirect_uri: appConfig.redirectURL,
             objectId: objectId, // Add objectId  
             facilityCode: facilityCode // Add facilityCode  
         });
-        return axios.post(url, requestBody, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        }).then(response => {
+        try {
+            const response = await axios.post(url, requestBody, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
             console.log('Refreshed Access Token:', response.data.access_token);
             setRefreshToken(response.data.refresh_token); // Update the refresh token if it's included in the response  
             return response.data.access_token;
-        }).catch(error => {
+        } catch (error) {
             console.error('Error refreshing access token:', error);
             throw error;
-        });
+        }
     };
 
     return (
