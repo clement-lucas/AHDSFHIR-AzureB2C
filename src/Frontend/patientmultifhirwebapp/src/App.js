@@ -13,20 +13,19 @@ import './styles.css';
 const facilities = ['1001', '1002', '1003', '1004'];
 
 const App = () => {
-    const [patientData, setPatientData] = useState(null);
+    const [patientDataList, setPatientDataList] = useState([]);
+    const [accessTokenList, setAccessTokenList] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [refreshToken, setRefreshToken] = useState(null);
-    const [selectedFacility, setSelectedFacility] = useState(null);
     const [user, setUser] = useState(null);
-    const [accessToken, setAccessToken] = useState(null);
 
     useEffect(() => {
         userManager.events.addUserLoaded(user => {
             console.log('User loaded', user);
             setUser(user);
             setRefreshToken(user.refresh_token);
-            setAccessToken(user.access_token);
+            fetchAllPatientData(user.refresh_token); // Fetch data for all facilities when user is loaded
         });
         userManager.events.addUserUnloaded(() => {
             console.log('User unloaded');
@@ -37,7 +36,7 @@ const App = () => {
                 console.log('User:', user);
                 setUser(user);
                 setRefreshToken(user.refresh_token);
-                setAccessToken(user.access_token);
+                fetchAllPatientData(user.refresh_token); // Fetch data for all facilities when user is loaded
             }
         }).catch(error => {
             console.error('Error getting user:', error);
@@ -52,23 +51,25 @@ const App = () => {
         userManager.signoutRedirect();
     };
 
-    const handleFacilitySelect = async (facility) => {
+    const fetchAllPatientData = async (refreshToken) => {
         setLoading(true);
-        setSelectedFacility(facility); // This will still update the state, but we won't rely on it immediately  
         try {
             const user = await userManager.getUser();
             if (user) {
-                fetchPatientData(accessToken, user, facility); // Pass facility directly  
+                // Promise.allを使用して並列に処理
+                await Promise.all(facilities.map(
+                    facility => fetchPatientData(refreshToken, user, facility)
+                ));
             }
         } catch (e) {
             console.error('Error:', e);
-            setError('An error occurred while selecting the facility. Please try again.');
+            setError('An error occurred while fetching patient data. Please try again.');
+        } finally {
             setLoading(false);
         }
-    };
+    }
 
-    const fetchPatientData = async (accessToken, user, facility) => {
-        setLoading(true); // Show loader when data fetching starts  
+    const fetchPatientData = async (refreshToken, user, facility) => {
         try {
             // Refresh the access token first  
             const refreshedAccessToken = await refreshAccessToken(refreshToken, user.profile.sub, facility);
@@ -85,7 +86,15 @@ const App = () => {
                 },
             });
             console.log('Patient Data:', response.data);
-            setPatientData(response.data);
+
+            // Update the AccessTokenList with the refreshed access token
+            accessTokenList[facility] = refreshedAccessToken;
+            setAccessTokenList(accessTokenList);
+
+            // Update the patient data for the selected facility
+            patientDataList[facility] = response.data;
+            setPatientDataList(patientDataList);
+
             setError(null);
         } catch (error) {
             console.error('Error fetching patient data:', error);
@@ -95,9 +104,18 @@ const App = () => {
             } else {
                 setError('An error occurred while fetching patient data. Please try again.');
             }
-            setPatientData(null); // Clear patient data on error  
+
+            if ('facility' in accessTokenList) {
+                delete accessTokenList['facility'];
+            }
+            setAccessTokenList(accessTokenList);
+
+            if ('facility' in patientDataList) {
+                delete patientDataList['facility'];
+            }
+            setPatientDataList(patientDataList);
+
         } finally {
-            setLoading(false); // Hide loader after data is fetched or in case of error  
         }
     };
 
@@ -119,7 +137,6 @@ const App = () => {
                 }
             });
             console.log('Refreshed Access Token:', response.data.access_token);
-            setAccessToken(response.data.access_token); // Update the access token  
             setRefreshToken(response.data.refresh_token); // Update the refresh token if it's included in the response  
             return response.data.access_token;
         } catch (error) {
@@ -140,14 +157,6 @@ const App = () => {
                         ) : (
                             <button onClick={handleLogin}>Login</button>
                         )}
-                        <div className="facility-buttons">
-                            <h2>Select Facility</h2>
-                            {facilities.map(facility => (
-                                <button key={facility} onClick={() => handleFacilitySelect(facility)}>
-                                    {facility}
-                                </button>
-                            ))}
-                        </div>
                         {error && (
                             <div className="error-message">
                                 <p>{error}</p>
@@ -157,7 +166,9 @@ const App = () => {
                             <Loader /> // Show loader when loading  
                         ) : (
                             <div className="patient-info">
-                                <PatientInfo patientData={patientData} />
+                                {facilities.map((facility, index) => (
+                                    <PatientInfo key={index} facility={facility} patientData={patientDataList[facility]} />
+                                ))}
                             </div>
                         )}
                     </div>

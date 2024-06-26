@@ -2,7 +2,8 @@
 
 import React from 'react';
 
-const PatientInfo = ({ patientData }) => {
+const PatientInfo = ({ facility, patientData }) => {
+    if (!facility) return null;
     if (!patientData) return null;
 
     const { resourceType, id, active, birthDate, gender, name } = patientData;
@@ -10,6 +11,7 @@ const PatientInfo = ({ patientData }) => {
     return (
         <div>
             <h2>Patient Information</h2>
+            <p><strong>Facility:</strong> {facility}</p>
             <p><strong>Resource Type:</strong> {resourceType}</p>
             <p><strong>ID:</strong> {id}</p>
             <p><strong>Active:</strong> {active ? 'Yes' : 'No'}</p>
