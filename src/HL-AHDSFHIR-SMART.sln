@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HL-AHDSFHIR-DBWrapperFunction", "src\AzureFunctions\HL-AHDSFHIR-DBWrapperFunction\HL-AHDSFHIR-DBWrapperFunction.csproj", "{D8399660-2591-463C-8037-6DC26FDFABC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HL-AHDSFHIR-DBWrapperFunction", "AzureFunctions\HL-AHDSFHIR-DBWrapperFunction\HL-AHDSFHIR-DBWrapperFunction.csproj", "{D8399660-2591-463C-8037-6DC26FDFABC1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HL-AHDSFHIR-AuthHandlerFunction", "src\AzureFunctions\HL-AHDSFHIR-AuthHandlerFunction\HL-AHDSFHIR-AuthHandlerFunction.csproj", "{2C8418CA-8222-4F44-868F-ABAD2DEDD562}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HL-AHDSFHIR-AuthHandlerFunction", "AzureFunctions\HL-AHDSFHIR-AuthHandlerFunction\HL-AHDSFHIR-AuthHandlerFunction.csproj", "{2C8418CA-8222-4F44-868F-ABAD2DEDD562}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientwebapp", "src\Frontend\patientwebapp\patientwebapp.esproj", "{50899FD9-43F1-4DD4-BEF8-16BC9A150845}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientsinglefhirwebapp", "Frontend\patientsinglefhirwebapp\patientsinglefhirwebapp.esproj", "{50899FD9-43F1-4DD4-BEF8-16BC9A150845}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientmultifhirwebapp", "src\Frontend\patientmultifhirwebapp\patientmultifhirwebapp.esproj", "{0FADA343-9C98-45B0-AB79-5AB6ED64FE8F}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientmultifhirwebapp", "Frontend\patientmultifhirwebapp\patientmultifhirwebapp.esproj", "{0FADA343-9C98-45B0-AB79-5AB6ED64FE8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

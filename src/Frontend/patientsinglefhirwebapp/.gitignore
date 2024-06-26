@@ -11,6 +11,12 @@
 # production
 /build
 
+# .NET compilation files
+/obj
+
+# Visual Studio folders
+.vs
+
 # misc
 .DS_Store
 .env.local

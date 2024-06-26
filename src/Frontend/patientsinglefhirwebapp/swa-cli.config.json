@@ -1,7 +1,7 @@
 {
   "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
   "configurations": {
-    "patientwebapp": {
+    "patientsinglefhirwebapp": {
       "appLocation": ".",
       "outputLocation": "build",
       "appBuildCommand": "npm run build",

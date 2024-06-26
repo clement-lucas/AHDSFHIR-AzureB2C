@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import userManager from './authConfig';
+import appConfig from './appConfig';
 import Callback from './Callback';
 import axios from 'axios';
 import PatientInfo from './PatientInfo';
@@ -10,7 +11,7 @@ import Loader from './Loader';
 import { jwtDecode } from 'jwt-decode';
 import './styles.css';
 
-const facilities = ['1001', '1002', '1003', '1004'];
+const facilities = appConfig.facilities;
 
 const App = () => {
     const [patientDataList, setPatientDataList] = useState([]);
@@ -119,30 +120,29 @@ const App = () => {
         }
     };
 
-    const refreshAccessToken = async (refreshToken, objectId, facilityCode) => {
-        const url = `https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/token`;
+    const refreshAccessToken = (refreshToken, objectId, facilityCode) => {
+        const url = appConfig.tokenURL;
         const requestBody = new URLSearchParams({
             grant_type: 'refresh_token',
-            client_id: "661862bb-946b-4580-8bec-b7ae75905ab6",
-            scope: 'openid offline_access https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.all.read',
+            client_id: appConfig.clientID,
+            scope: appConfig.refreshTokenScope,
             refresh_token: refreshToken,
-            redirect_uri: "https://green-sea-0cde26500.5.azurestaticapps.net/callback", // Updated redirect URI  
-            objectId: objectId, // Added objectId  
-            facilityCode: facilityCode // Added facilityCode  
+            redirect_uri: appConfig.redirectURL,
+            objectId: objectId, // Add objectId  
+            facilityCode: facilityCode // Add facilityCode  
         });
-        try {
-            const response = await axios.post(url, requestBody, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            });
+        return axios.post(url, requestBody, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(response => {
             console.log('Refreshed Access Token:', response.data.access_token);
             setRefreshToken(response.data.refresh_token); // Update the refresh token if it's included in the response  
             return response.data.access_token;
-        } catch (error) {
+        }).catch(error => {
             console.error('Error refreshing access token:', error);
             throw error;
-        }
+        });
     };
 
     return (
@@ -183,4 +183,3 @@ const App = () => {
 };
 
 export default App;
-
