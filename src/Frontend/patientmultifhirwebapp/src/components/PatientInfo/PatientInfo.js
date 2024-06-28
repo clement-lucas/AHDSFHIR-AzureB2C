@@ -1,6 +1,7 @@
 // src/PatientInfo.js  
 
 import React from 'react';
+import './PatientInfo.css';
 
 const PatientInfo = ({ facility, patientData }) => {
     if (!facility) return null;

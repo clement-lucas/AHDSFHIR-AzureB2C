@@ -34,7 +34,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # Visual Studio Code directories
-.vscode/
+
 .vs/
 
 # Node Modules folder

@@ -6,10 +6,9 @@ import userManager from './authConfig';
 import appConfig from './appConfig';
 import Callback from './Callback';
 import axios from 'axios';
-import PatientInfo from './PatientInfo';
-import Loader from './Loader';
 import { jwtDecode } from 'jwt-decode';
 import './styles.css';
+import MainComponent from './components/MainComponent/MainComponent';
 
 const facilities = appConfig.facilities;
 
@@ -146,8 +145,22 @@ const App = () => {
             // "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/launch",
             // "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/fhirUser",
             "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Patient.read",
-            // "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation"
+            // "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.AllergyIntolerance.read",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Condition.read",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Immunization.read",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Observation.read",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Procedure.read",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.MedicationRequest.read",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Observation.read",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Location.read",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Practitioner.read",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.PractitionerRole.read",
+            "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Organization.read",
+
+
         ];
+
         // Join the scopes array into a single string with spaces
         const scopesString = scopes.join(' ');
 
@@ -178,33 +191,15 @@ const App = () => {
 
     return (
         <Router>
-            <div className="App">
-                <header className="App-header">
-                    <h1>Welcome to Demo App</h1>
-                    <h2>Multiple FHIR service access with Azure B2C Authentication using custom policy</h2>
-                    <div>
-                        {user ? (
-                            <button onClick={handleLogout}>Logout</button>
-                        ) : (
-                            <button onClick={handleLogin}>Login</button>
-                        )}
-                        {error && (
-                            <div className="error-message">
-                                <p>{error}</p>
-                            </div>
-                        )}
-                        {loading ? (
-                            <Loader /> // Show loader when loading  
-                        ) : (
-                            <div className="patient-info">
-                                {facilities.map((facility, index) => (
-                                    <PatientInfo key={index} facility={facility} patientData={patientDataList[facility]} />
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </header>
-            </div>
+            <MainComponent
+                user={user}
+                error={error}
+                handleLogin={handleLogin}
+                handleLogout={handleLogout}
+                loading={loading}
+                facilities={facilities}
+                patientDataList={patientDataList}
+            />
             <Routes> {/* Updated from Switch to Routes */}
                 <Route path="/callback" element={<Callback />} /> {/* Updated from component to element */}
                 {/* Add other routes as needed */}

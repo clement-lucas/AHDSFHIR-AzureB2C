@@ -14,10 +14,10 @@ body {
     text-align: center;
 }
 
-    .App-header h1 {
-        margin: 0;
-        font-size: 2.5em;
-    }
+.App-header h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
 
 button {
     margin: 10px;
@@ -28,49 +28,6 @@ button {
     cursor: pointer;
 }
 
-    button:hover {
-        background-color: #ddd;
-    }
-
-.facility-buttons {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-}
-
-.patient-info {
-    background-color: white;
-    padding: 20px;
-    margin: 20px auto;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    color: black; /* Ensure text color is black */
-}
-
-    .patient-info h2 {
-        text-align: center;
-        margin-top: 0;
-        color: black; /* Ensure text color is black */
-    }
-
-    .patient-info p, .patient-info div {
-        margin: 10px 0;
-        color: black; /* Ensure text color is black */
-    }
-
-    .patient-info div {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-.error-message {
-    color: red;
-    background-color: #ffe6e6;
-    padding: 10px;
-    border: 1px solid red;
-    border-radius: 5px;
-    margin: 10px 0;
-    text-align: center;
+button:hover {
+    background-color: #ddd;
 }
