@@ -183,7 +183,14 @@
         </OrchestrationStep>
 
         <!-- Add the REST API call step to fetch fhirUser based on objectId and facilityCode -->
-        <OrchestrationStep Order="3" Type="ClaimsExchange">  
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Value>facilityCode</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
           <ClaimsExchanges>  
             <ClaimsExchange Id="REST-GetFHIRUser" TechnicalProfileReferenceId="REST-GetFHIRUser" />  
           </ClaimsExchanges>  
@@ -280,7 +287,14 @@
         </OrchestrationStep>
 
         <!-- Add the REST API call step to fetch fhirUser based on objectId and facilityCode -->
-        <OrchestrationStep Order="7" Type="ClaimsExchange">  
+        <OrchestrationStep Order="7" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Value>facilityCode</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
           <ClaimsExchanges>  
             <ClaimsExchange Id="REST-GetFHIRUser" TechnicalProfileReferenceId="REST-GetFHIRUser" />  
           </ClaimsExchanges>  
