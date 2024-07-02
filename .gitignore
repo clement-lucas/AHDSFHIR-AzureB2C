@@ -125,3 +125,4 @@ ScaffoldingReadMe.txt
 *.swp
 *~
 ._*
+src/Frontend/patientmultifhirwebapp/env.development.local

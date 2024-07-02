@@ -138,7 +138,7 @@ const App = () => {
 
     const refreshAccessToken = async (refreshToken, objectId, facilityCode) => {
         const url = appConfig.tokenURL;
-        // Define scopes in an array for better maintainability
+        // Define the list of scopes
         const scopes = [
             "openid",
             "offline_access",
@@ -168,7 +168,7 @@ const App = () => {
             grant_type: 'refresh_token',
             client_id: appConfig.clientID,
             //scope: appConfig.refreshTokenScope,
-            scope: scopesString, // Use the scopes string instead of the refreshTokenScope
+            scope: scopesString, 
             refresh_token: refreshToken,
             redirect_uri: appConfig.redirectURL,
             objectId: objectId, // Add objectId  
