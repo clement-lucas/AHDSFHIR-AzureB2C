@@ -65,7 +65,7 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                     return new BadRequestObjectResult("Internal Server Error.");
                 }
 
-                if (scopeValueList.Count >= 0)
+                if (scopeValueList.Count > 0)
                 {
                     foreach (var scopeValue in scopeValueList)
                     {
@@ -93,7 +93,7 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                         ON 
                             d.scope_id = m.scope_id 
                         WHERE 
-                            AND d.delete_flag = false;", conn);
+                            d.delete_flag = false;", conn);
                     return command;
                 });
 
