@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Npgsql;
+using HL_AHDSFHIR_AuthHandlerFunction.lib;
+
 namespace HL_AHDSFHIR_AuthHandlerFunction
 {
     public static class GetFHIRUser
@@ -42,9 +44,10 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                     logger.LogInformation($"Returning dummy result: {dummyResult}, Id={invocationId}");
                     return new OkObjectResult(dummyResult);
                 }
-                var connectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");
-                var retryInterval = int.Parse(Environment.GetEnvironmentVariable("SQL_RETRY_INTERVAL"));
-                var retryCount = int.Parse(Environment.GetEnvironmentVariable("SQL_RETRY_COUNT"));
+
+                var connectionString = SQLManagement.GetConnectionString(logger, invocationId);
+                var retryInterval = SQLManagement.GetRetryInterval(logger, invocationId);
+                var retryCount = SQLManagement.GetRetryCount(logger, invocationId);
                 logger.LogInformation($"retryInterval: {retryInterval}");
                 logger.LogInformation($"retryCount: {retryCount}");
                 var resFacilityCode = "";
@@ -114,13 +117,15 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                 logger.LogInformation($"Facility Code: {resFacilityCode}, Id={invocationId}");
                 logger.LogInformation($"Patient Resource ID: {resPatientResourceId}, Id={invocationId}");
                 logger.LogInformation($"FHIR Service URL: {resFHIRServiceUrl}, Id={invocationId}");
+
+                var patientResourceIdPrefix = Environment.GetEnvironmentVariable("PATIENT_RESOURCE_ID_PREFIX");
                 // Construct the result  
                 var result = new
                 {
                     //version = "1.0.0",
                     //action = "Continue",
                     facilityCode = resFacilityCode, // custom claim  
-                    fhirUser = resFHIRServiceUrl + "/" + resPatientResourceId // custom claim  
+                    fhirUser = $"{resFHIRServiceUrl}/{patientResourceIdPrefix}{resPatientResourceId}" // custom claim  
                 };
                 logger.LogInformation($"Response Body: {result}, Id={invocationId}");
                 return new OkObjectResult(result);
