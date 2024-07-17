@@ -1,6 +1,6 @@
 {
     "azureFunctions.projectSubpath": "src\\AzureFunctions\\HL-AHDSFHIR-AuthHandlerFunction",
-    "azureFunctions.deploySubpath": "src\\AzureFunctions\\HL-AHDSFHIR-AuthHandlerFunction/bin/Release/net8.0/publish",
+    "azureFunctions.deploySubpath": "src\\AzureFunctions\\HL-AHDSFHIR-BFFFunction/bin/Release/net8.0/publish",
     "azureFunctions.projectLanguage": "C#",
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",

@@ -1,0 +1,24 @@
+/* components/Loader/Loader.css */
+.loader {
+    /* Light grey */
+    border: 16px solid #f3f3f3;
+    /* Blue */
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
