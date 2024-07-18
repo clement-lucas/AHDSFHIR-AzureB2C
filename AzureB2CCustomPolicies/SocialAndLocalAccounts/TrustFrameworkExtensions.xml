@@ -28,6 +28,12 @@
         <UserHelpText>The FHIR user URL.</UserHelpText>  
       </ClaimType>
 
+      <!-- <ClaimType Id="scp">  
+        <DisplayName>Scope</DisplayName>  
+        <DataType>string</DataType>
+        <UserHelpText>Custom Scope Claim</UserHelpText>  
+      </ClaimType> -->
+
     </ClaimsSchema>
 
   </BuildingBlocks>
@@ -50,7 +56,7 @@
       </TechnicalProfiles>  
     </ClaimsProvider> 
 
-    	<!-- The following Technical profile is for calling REST API to receive facilityCode and fhirUser claims -->
+    <!-- The following Technical profile is for calling REST API to receive facilityCode and fhirUser claims -->
     <ClaimsProvider>  
       <DisplayName>REST APIs</DisplayName>  
       <TechnicalProfiles>  
@@ -76,6 +82,36 @@
 			      <!-- Claims parsed from REST API -->
             <OutputClaim ClaimTypeReferenceId="facilityCode" />  
             <OutputClaim ClaimTypeReferenceId="fhirUser" />  
+          </OutputClaims>  
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />  
+        </TechnicalProfile>  
+      </TechnicalProfiles>  
+    </ClaimsProvider>
+
+    <!-- The following Technical profile is for calling REST API to receive scope -->
+    <ClaimsProvider>  
+      <DisplayName>REST APIs</DisplayName>  
+      <TechnicalProfiles>  
+        <TechnicalProfile Id="REST-GetFHIRScope">  
+          <DisplayName>Get FHIR Scope</DisplayName>  
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+            <Item Key="ServiceUrl">https://smart-on-fhir-authhandler-func.azurewebsites.net/api/GetFHIRScope?code=ze3QL0zdQLIIg73Y9ifUnhrL06avzNqPz_bTZFGFE6TYAzFuZ-BMOw%3D%3D</Item>  
+            <Item Key="SendClaimsIn">Body</Item>
+            <!-- Set AuthenticationType to Basic or ClientCertificate in production environments -->
+            <Item Key="AuthenticationType">None</Item>
+            <!-- REMOVE the following line in production environments -->
+            <Item Key="AllowInsecureAuthInProduction">true</Item>
+            <Item Key="DebugMode">true</Item>
+          </Metadata>
+          <InputClaims>
+			      <!-- Claims sent to REST API -->
+            <InputClaim ClaimTypeReferenceId="objectId" />            
+          </InputClaims>  
+          <OutputClaims>
+			      <!-- Claims parsed from REST API -->
+            <OutputClaim ClaimTypeReferenceId="scope" />            
           </OutputClaims>  
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />  
         </TechnicalProfile>  
@@ -132,17 +168,6 @@
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="refreshTokenIssuedOnDateTime" />
-            
-            <!--Requirement: Claims that you return in the relying party technical profile output claims
-              that are not stored in Azure AD B2C, must be added to the output claims collection here-->
-            <!--
-            
-            <OutputClaim ClaimTypeReferenceId="RESTAPIclaim1" />
-            <OutputClaim ClaimTypeReferenceId="IDPclaim1" />
-            -->
-            <!-- <OutputClaim ClaimTypeReferenceId="facilityCode" />
-            <OutputClaim ClaimTypeReferenceId="fhirUser" /> -->
-
           </OutputClaims>
         </TechnicalProfile>
 
@@ -195,6 +220,13 @@
             <ClaimsExchange Id="REST-GetFHIRUser" TechnicalProfileReferenceId="REST-GetFHIRUser" />  
           </ClaimsExchanges>  
         </OrchestrationStep>
+
+        <!-- Add the REST API call step to fetch Scope based on objectId -->
+        <!-- <OrchestrationStep Order="4" Type="ClaimsExchange">
+          <ClaimsExchanges>  
+            <ClaimsExchange Id="REST-GetFHIRScope" TechnicalProfileReferenceId="REST-GetFHIRScope" />  
+          </ClaimsExchanges>  
+        </OrchestrationStep> -->
 
         <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
       </OrchestrationSteps>
@@ -299,6 +331,13 @@
             <ClaimsExchange Id="REST-GetFHIRUser" TechnicalProfileReferenceId="REST-GetFHIRUser" />  
           </ClaimsExchanges>  
         </OrchestrationStep>
+
+        <!-- Add the REST API call step to fetch Scope based on objectId -->
+        <!-- <OrchestrationStep Order="8" Type="ClaimsExchange">
+          <ClaimsExchanges>  
+            <ClaimsExchange Id="REST-GetFHIRScope" TechnicalProfileReferenceId="REST-GetFHIRScope" />  
+          </ClaimsExchanges>
+        </OrchestrationStep> -->
 
         <OrchestrationStep Order="8" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
 

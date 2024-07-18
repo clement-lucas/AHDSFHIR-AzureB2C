@@ -1,4 +1,3 @@
-
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -22,8 +21,10 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
             ILogger logger, ExecutionContext context)
         {
             string invocationId = context.InvocationId.ToString();
-            logger.LogInformation($"start GetFHIRUser request. Id={invocationId}");
-            try{
+            logger.LogInformation($"start GetFHIRScope request. Id={invocationId}");
+
+            try
+            {
                 // Read the request body  
                 var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 // Log the request body data  
@@ -32,34 +33,37 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                 JObject data = JObject.Parse(requestBody);
                 // Extract objectId from the request body  
                 var reqObjectId = data["objectId"]?.ToString();
-                if (data == null || string.IsNullOrEmpty(reqObjectId) )
+
+                if (data == null || string.IsNullOrEmpty(reqObjectId))
                 {
                     var dummyResult = new
                     {
-                        scopes = ""
+                        scope = ""
                     };
                     logger.LogInformation($"Returning dummy result: {dummyResult}, Id={invocationId}");
                     return new OkObjectResult(dummyResult);
                 }
 
-                var funcGetScopeByUser = new Func<NpgsqlConnection, NpgsqlCommand>(conn => {
+                var funcGetScopeByUser = new Func<NpgsqlConnection, NpgsqlCommand>(conn =>
+                {
                     var command = new NpgsqlCommand(
-                        @"SELECT 
-                            m.scope_value
-                        FROM
-                            users.m_patient_fhir_scope_management u
-                        JOIN 
-                            common.m_fhir_scope_master m 
-                        ON 
-                            u.scope_id = m.scope_id 
-                        WHERE 
-                            u.user_b2c_id = @objectId
+                        @"SELECT   
+                            m.scope_value  
+                        FROM  
+                            users.m_patient_fhir_scope_management u  
+                        JOIN   
+                            common.m_fhir_scope_master m   
+                        ON   
+                            u.scope_id = m.scope_id   
+                        WHERE  
+                            u.user_b2c_id = @objectId  
                             AND u.delete_flag = false;", conn);
                     command.Parameters.AddWithValue("objectId", reqObjectId);
                     return command;
                 });
 
                 var scopeValueList = GetScopeValueList(logger, funcGetScopeByUser, invocationId);
+
                 if (scopeValueList == null)
                 {
                     return new BadRequestObjectResult("Internal Server Error.");
@@ -71,33 +75,34 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                     {
                         logger.LogInformation($"reqObjectId: {reqObjectId}, Scope Value: {scopeValue}, Id={invocationId}");
                     }
-
-                    // Construct the result  
+                    // Join the scopes into a single string  
                     var result = new
                     {
-                        scopes = scopeValueList
+                        scope = string.Join(" ", scopeValueList)
                     };
                     logger.LogInformation($"Response Body: {result}, Id={invocationId}");
                     return new OkObjectResult(result);
                 }
 
-                // not found.
-                var funcGetScopeDefault = new Func<NpgsqlConnection, NpgsqlCommand>(conn => {
+                // not found.  
+                var funcGetScopeDefault = new Func<NpgsqlConnection, NpgsqlCommand>(conn =>
+                {
                     var command = new NpgsqlCommand(
-                        @"SELECT 
-                            m.scope_value
-                        FROM
-                            users.m_patient_fhir_scope_default d
-                        JOIN 
-                            common.m_fhir_scope_master m 
-                        ON 
-                            d.scope_id = m.scope_id 
-                        WHERE 
+                        @"SELECT   
+                            m.scope_value  
+                        FROM  
+                            users.m_patient_fhir_scope_default d  
+                        JOIN   
+                            common.m_fhir_scope_master m   
+                        ON   
+                            d.scope_id = m.scope_id   
+                        WHERE  
                             d.delete_flag = false;", conn);
                     return command;
                 });
 
                 scopeValueList = GetScopeValueList(logger, funcGetScopeDefault, invocationId);
+
                 if (scopeValueList == null)
                 {
                     return new BadRequestObjectResult("Internal Server Error.");
@@ -108,11 +113,12 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                     logger.LogInformation($"reqObjectId: {reqObjectId}, Scope Value: {scopeValue}, Id={invocationId}");
                 }
 
-                // Construct the result  
+                // Join the scopes into a single string  
                 var resultDefault = new
                 {
-                    scopes = scopeValueList 
+                    scope = string.Join(" ", scopeValueList)
                 };
+
                 logger.LogInformation($"Response Body: {resultDefault}, Id={invocationId}");
                 return new OkObjectResult(resultDefault);
             }
@@ -123,13 +129,13 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
             }
             finally
             {
-                logger.LogInformation($"end GetFHIRUser request. Id={invocationId}");
+                logger.LogInformation($"end GetFHIRScope request. Id={invocationId}");
             }
         }
 
         private static List<string> GetScopeValueList(
-            ILogger logger, 
-            Func<NpgsqlConnection, NpgsqlCommand> func, 
+            ILogger logger,
+            Func<NpgsqlConnection, NpgsqlCommand> func,
             string invocationId)
         {
             var connectionString = SQLManagement.GetConnectionString(logger, invocationId);
@@ -138,16 +144,15 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
             logger.LogInformation($"retryInterval: {retryInterval}");
             logger.LogInformation($"retryCount: {retryCount}");
 
-            // Retry connecting to DB and reading it
-            while(true)
+            // Retry connecting to DB and reading it  
+            while (true)
             {
                 logger.LogInformation($"Connecting to DB and reading it. interval: {retryInterval}, retry count: {retryCount}, Id={invocationId}");
                 try
                 {
                     var tennantId = Environment.GetEnvironmentVariable("FHIR_TENANT_ID");
                     var applicationId = Environment.GetEnvironmentVariable("FHIR_APPLICATION_ID");
-                    if (String.IsNullOrEmpty(tennantId)
-                    || String.IsNullOrEmpty(applicationId))
+                    if (String.IsNullOrEmpty(tennantId) || String.IsNullOrEmpty(applicationId))
                     {
                         logger.LogError("FHIR_TENANT_ID or FHIR_APPLICATION_ID is not set.");
                         return null;
@@ -157,19 +162,23 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                     conn.Open();
                     using var command = func(conn);
                     var scopeValueList = new List<string>();
+
                     using (var reader = command.ExecuteReader())
                     {
-                        // レコードをリストに格納
+                        // Store records in the list  
                         while (reader.Read())
                         {
-                            var scope_value = $"{tennantId}/{applicationId}/{reader.GetString(0)}"; 
+                            var scope_value = $"{tennantId}/{applicationId}/{reader.GetString(0)}";
+                            //var scope_value = reader.GetString(0);
                             scopeValueList.Add(scope_value);
                         }
                     }
+
                     if (scopeValueList.Count == 0)
                     {
                         return scopeValueList;
                     }
+
                     return scopeValueList;
                 }
                 catch (Exception ex)
@@ -177,15 +186,13 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                     if (retryCount > 0)
                     {
                         retryCount--;
-                        Task.Delay(retryInterval);
-                        logger.LogInformation(ex, 
-                            $"Retry connecting to DB and reading it. interval: {retryInterval}, retry count: {retryCount}, error: {ex.Message}, Id={invocationId}"); 
+                        Task.Delay(retryInterval).Wait();
+                        logger.LogInformation(ex, $"Retry connecting to DB and reading it. interval: {retryInterval}, retry count: {retryCount}, error: {ex.Message}, Id={invocationId}");
                         continue;
                     }
                     else
                     {
-                        logger.LogError(ex, 
-                            $"Error occurred while connecting to DB and reading it. error: {ex.Message}, Id={invocationId}");
+                        logger.LogError(ex, $"Error occurred while connecting to DB and reading it. error: {ex.Message}, Id={invocationId}");
                         return null;
                     }
                 }
