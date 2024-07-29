@@ -1,3 +1,5 @@
+// src\Frontend\patientmultifhirwebapp\src\components\MainComponent\MainComponent.js
+
 import React from 'react';
 import LoginButton from '../LoginButton/LoginButton'; // Adjust the import path as necessary
 import Loader from '../Loader/Loader'; // Adjust the import path as necessary

@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>  
+<TrustFrameworkPolicy 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" 
+	PolicySchemaVersion="0.3.0.0" TenantId="uvancehlpfdemo.onmicrosoft.com" 
+	PolicyId="B2C_1A_TrustFrameworkExtensions" 
+	PublicPolicyUri="http://uvancehlpfdemo.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions" 
+	DeploymentMode = "Development">  
+  
+  <BasePolicy>  
+    <TenantId>uvancehlpfdemo.onmicrosoft.com</TenantId>  
+    <PolicyId>B2C_1A_TrustFrameworkLocalization</PolicyId>  
+  </BasePolicy>
+  <BuildingBlocks>
+
+    <ClaimsSchema>
+
+      <ClaimType Id="facilityCode">  
+        <DisplayName>Facility Code</DisplayName>  
+        <DataType>string</DataType>
+        <UserHelpText>The code of the facility.</UserHelpText>  
+      </ClaimType>
+
+	    <ClaimType Id="fhirUser">  
+        <DisplayName>FHIR User</DisplayName>  
+        <DataType>string</DataType>
+        <UserHelpText>The FHIR user URL.</UserHelpText>  
+      </ClaimType>
+
+    </ClaimsSchema>
+
+  </BuildingBlocks>
+
+  <ClaimsProviders>
+
+    <ClaimsProvider>  
+      <DisplayName>Local Account SignIn</DisplayName>  
+      <TechnicalProfiles>  
+        <TechnicalProfile Id="login-NonInteractive">  
+          <Metadata>  
+            <Item Key="client_id">e218b9d7-7ede-4a49-b50e-a317f039ce22</Item>  
+            <Item Key="IdTokenAudience">9350d94e-3a16-46d2-81f8-9181e11ef463</Item>  
+          </Metadata>  
+          <InputClaims>  
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="e218b9d7-7ede-4a49-b50e-a317f039ce22" />  
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="9350d94e-3a16-46d2-81f8-9181e11ef463" />  
+          </InputClaims>  
+        </TechnicalProfile>  
+      </TechnicalProfiles>  
+    </ClaimsProvider> 
+
+    	<!-- The following Technical profile is for calling REST API to receive facilityCode and fhirUser claims -->
+    <ClaimsProvider>  
+      <DisplayName>REST APIs</DisplayName>  
+      <TechnicalProfiles>  
+        <TechnicalProfile Id="REST-GetFHIRUser">  
+          <DisplayName>Get FHIR User</DisplayName>  
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+            <Item Key="ServiceUrl">https://smart-on-fhir-authhandler-func.azurewebsites.net/api/GetFHIRUser?code=Bs_8tOyRCsj_98OeGjw-KoZJJ_aG8kvWHK0LvawiW7XSAzFuPZTOVg%3D%3D</Item>  
+            <Item Key="SendClaimsIn">Body</Item>
+            <!-- Set AuthenticationType to Basic or ClientCertificate in production environments -->
+            <Item Key="AuthenticationType">None</Item>
+            <!-- REMOVE the following line in production environments -->
+            <Item Key="AllowInsecureAuthInProduction">true</Item>
+            <Item Key="DebugMode">true</Item>
+          </Metadata>
+          <InputClaims>
+			      <!-- Claims sent to REST API -->
+            <InputClaim ClaimTypeReferenceId="objectId" />
+            <InputClaim ClaimTypeReferenceId="facilityCode" AlwaysUseDefaultValue="true" DefaultValue="{OAUTH-KV:facilityCode}"  />  
+          </InputClaims>  
+          <OutputClaims>
+			      <!-- Claims parsed from REST API -->
+            <OutputClaim ClaimTypeReferenceId="facilityCode" />  
+            <OutputClaim ClaimTypeReferenceId="fhirUser" />  
+          </OutputClaims>  
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />  
+        </TechnicalProfile>  
+      </TechnicalProfiles>  
+    </ClaimsProvider>
+
+    <!--claims provider for refresh token revocation-->
+    <ClaimsProvider>
+      <DisplayName>Refresh token journey</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="RefreshTokenReadAndSetup">
+          <DisplayName>Trustframework Policy Engine Refresh Token Setup Technical Profile</DisplayName>
+          <Protocol Name="None" />
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="refreshTokenIssuedOnDateTime" />
+            
+            <!--Requirement: Claims that you return in the relying party technical profile output claims
+              that are not stored in Azure AD B2C, must be added to the output claims collection here-->
+            <!--
+            
+            <OutputClaim ClaimTypeReferenceId="RESTAPIclaim1" />
+            <OutputClaim ClaimTypeReferenceId="IDPclaim1" />
+            -->
+            <!-- <OutputClaim ClaimTypeReferenceId="facilityCode" />
+            <OutputClaim ClaimTypeReferenceId="fhirUser" /> -->
+
+          </OutputClaims>
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD-UserReadUsingObjectId-CheckRefreshTokenDate">
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="refreshTokensValidFromDateTime" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="AssertRefreshTokenIssuedLaterThanValidFromDate" />
+          </OutputClaimsTransformations>
+          <IncludeTechnicalProfile ReferenceId="AAD-UserReadUsingObjectId" />
+        </TechnicalProfile>
+
+      </TechnicalProfiles>
+      
+    </ClaimsProvider>
+
+  </ClaimsProviders>
+
+  <UserJourneys>
+
+    <UserJourney Id="RedeemRefreshToken">
+      <PreserveOriginalAssertion>false</PreserveOriginalAssertion>
+      <OrchestrationSteps>
+        <OrchestrationStep Order="1" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="RefreshTokenSetupExchange" TechnicalProfileReferenceId="RefreshTokenReadAndSetup" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        
+        <!-- Extra steps can be added before or after this step for REST API or claims transformation calls-->
+
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="CheckRefreshTokenDateFromAadExchange" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId-CheckRefreshTokenDate" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Add the REST API call step to fetch fhirUser based on objectId and facilityCode -->
+        <OrchestrationStep Order="3" Type="ClaimsExchange">  
+          <ClaimsExchanges>  
+            <ClaimsExchange Id="REST-GetFHIRUser" TechnicalProfileReferenceId="REST-GetFHIRUser" />  
+          </ClaimsExchanges>  
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+      </OrchestrationSteps>
+    </UserJourney>
+
+    <UserJourney Id="SignUpOrSignIn">
+      <OrchestrationSteps>
+
+        <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
+          <ClaimsProviderSelections>
+            <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
+          </ClaimsProviderSelections>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- This step reads any user attributes that we may not have received when in the token. -->
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Add the REST API call step to fetch fhirUser based on objectId and facilityCode -->
+        <OrchestrationStep Order="4" Type="ClaimsExchange">  
+          <ClaimsExchanges>  
+            <ClaimsExchange Id="REST-GetFHIRUser" TechnicalProfileReferenceId="REST-GetFHIRUser" />  
+          </ClaimsExchanges>  
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="5" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+
+      </OrchestrationSteps>
+      <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+
+    <UserJourney Id="ProfileEdit">
+      <OrchestrationSteps>
+
+        <OrchestrationStep Order="1" Type="ClaimsProviderSelection" ContentDefinitionReferenceId="api.idpselections">
+          <ClaimsProviderSelections>
+            <ClaimsProviderSelection TargetClaimsExchangeId="LocalAccountSigninEmailExchange" />
+          </ClaimsProviderSelections>
+        </OrchestrationStep>
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="4" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="B2CUserProfileUpdateExchange" TechnicalProfileReferenceId="SelfAsserted-ProfileUpdate" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="5" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+
+      </OrchestrationSteps>
+      <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+
+    <UserJourney Id="PasswordReset">
+      <OrchestrationSteps>
+        <OrchestrationStep Order="1" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="PasswordResetUsingEmailAddressExchange" TechnicalProfileReferenceId="LocalAccountDiscoveryUsingEmailAddress" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="NewCredentials" TechnicalProfileReferenceId="LocalAccountWritePasswordUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+      </OrchestrationSteps>
+      <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+    
+  </UserJourneys>
+
+</TrustFrameworkPolicy>

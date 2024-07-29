@@ -1,4 +1,4 @@
-// src/PatientInfo.js  
+// src\Frontend\patientmultifhirwebapp\src\components\PatientInfo\PatientInfo.js
 
 import React from 'react';
 import './PatientInfo.css';

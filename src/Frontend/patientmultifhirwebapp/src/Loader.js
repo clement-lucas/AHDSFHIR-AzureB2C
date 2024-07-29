@@ -1,4 +1,5 @@
-// src/Loader.js  
+// src\Frontend\patientmultifhirwebapp\src\Loader.js
+
 import React from 'react';
 import './loader.css'; // Import CSS for loader  
 

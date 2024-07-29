@@ -1,102 +1,74 @@
-// src/App.js
+// src\Frontend\patientmultifhirwebapp\src\App.js
 
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import userManager from './authConfig';
-import appConfig from './appConfig';
-import Callback from './Callback';
+import { MsalProvider, useIsAuthenticated, useMsal } from '@azure/msal-react';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // Correct import  
+import msalInstance from './msalConfig';
 import './styles.css';
 import MainComponent from './components/MainComponent/MainComponent';
+import appConfig from './appConfig';
+import LoginButton from './components/LoginButton/LoginButton';
+import Loader from './components/Loader/Loader';
+import PatientInfo from './components/PatientInfo/PatientInfo';
+import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 
 const facilities = appConfig.facilities;
 
-const App = () => {
+const App = () => (
+    <MsalProvider instance={msalInstance}>
+        <Router>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                {/* Add other routes as needed */}
+            </Routes>
+        </Router>
+    </MsalProvider>
+);
+
+const Home = () => {
+    const { instance, accounts } = useMsal();
+    const isAuthenticated = useIsAuthenticated();
     const [patientDataList, setPatientDataList] = useState([]);
     const [accessTokenList, setAccessTokenList] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [refreshToken, setRefreshToken] = useState(null);
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        userManager.events.addUserLoaded(user => {
-            console.log('User loaded', user);
-            setUser(user);
-            setRefreshToken(user.refresh_token);
-            fetchAllPatientData(user.refresh_token); // Fetch data for all facilities when user is loaded
-        });
-        userManager.events.addUserUnloaded(() => {
-            console.log('User unloaded');
-            setUser(null);
-        });
-        userManager.getUser().then(user => {
-            if (user) {
-                console.log('User:', user);
-                setUser(user);
-                setRefreshToken(user.refresh_token);
-                fetchAllPatientData(user.refresh_token); // Fetch data for all facilities when user is loaded
-            }
-        }).catch(error => {
-            console.error('Error getting user:', error);
-        });
-    }, []);
+        if (isAuthenticated) {
+            const account = accounts[0];
+            setUser(account);
+            fetchAllPatientData(account); // Fetch data for all facilities when user is loaded  
+        }
+    }, [isAuthenticated, accounts]);
 
     const handleLogin = () => {
-        userManager.signinRedirect();
+        instance.loginPopup({
+            scopes: ['openid', 'profile'],
+            prompt: 'select_account'
+        }).catch(error => {
+            console.error('Login error:', error);
+        });
     };
 
     const handleLogout = () => {
-        // Clear the local state  
-        setPatientDataList([]);
-        setAccessTokenList([]);
-        setError(null);
-        setLoading(false);
-        setRefreshToken(null);
-        setUser(null);
-
-        // Perform the logout  
-        userManager.signoutRedirect();
+        instance.logoutPopup({
+            postLogoutRedirectUri: appConfig.postLogoutRedirectURL,
+        });
     };
 
-    async function getScopesString(objectId) {
-        const url = "https://smart-on-fhir-authhandler-func.azurewebsites.net/api/GetFHIRScope?code=ze3QL0zdQLIIg73Y9ifUnhrL06avzNqPz_bTZFGFE6TYAzFuZ-BMOw%3D%3D";
-
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ objectId }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            return data.scope; // Assuming the API returns an object with scopesString
-        } catch (error) {
-            console.error("Failed to fetch scopesString:", error);
-            return null;
-        }
-    }
-
-    const fetchAllPatientData = async (refreshToken) => {
+    const fetchAllPatientData = async (account) => {
         setLoading(true);
-        setError(null); // Clear any previous error
+        setError(null); // Clear any previous error  
 
         try {
-            const user = await userManager.getUser();
-            if (user) {
-                // Call the function to get scopesString and prepend "openid offline_access"
-                let scopesString = await getScopesString(user.profile.sub); // Fetch dynamic scopes based on objectId
-                scopesString = "openid offline_access https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation " + scopesString; // Prepend static scopes
+            if (account) {
+
 
                 await Promise.all(facilities.map(
-                    facility => fetchPatientData(refreshToken, user, facility, scopesString)
+                    facility => fetchPatientData(account, facility)
                 ));
             }
         } catch (e) {
@@ -107,37 +79,53 @@ const App = () => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
-    const fetchPatientData = async (refreshToken, user, facility, scopesString) => {
+    const fetchPatientData = async (user, facilityCode) => {
+        console.log('objectId:', user.idTokenClaims.oid, 'facilityCode:', facilityCode);
+
+        // Call the function to get scopesString and prepend "openid offline_access"
+        //let scopes = await getScopesString(account.homeAccountId);
+        // scopes = "openid offline_access patient/*.read"; // Assuming the function returns "patient/*.read"
+
         try {
+            const response = await instance.ssoSilent({
+                authority: appConfig.authorityURL,
+                scopes: appConfig.scopes,
+                account: user,
+                forceRefresh: true,
+                extraQueryParameters: {
+                    objectId: user.idTokenClaims.oid,
+                    facilityCode: facilityCode
+                }
+            });
 
-            // Refresh the access token first
-            const refreshedAccessToken = await refreshAccessToken(refreshToken, user.profile.sub, facility, scopesString);
-            // Decode the refreshed access token to get the fhirUrl 
+            const refreshedAccessToken = response.accessToken;
+            console.log('refreshedAccessToken:', refreshedAccessToken);
             const decodedToken = jwtDecode(refreshedAccessToken);
+            console.log('decodedToken:', decodedToken);
             const fhirUrl = decodedToken.fhirUser;
 
             if (!fhirUrl) {
                 throw new Error('FHIR URL not found in token');
             }
-            // Use the refreshed access token to fetch the FHIR data
-            const response = await axios.get(fhirUrl, {
+
+            const patientDataResponse = await axios.get(fhirUrl, {
                 headers: {
                     Authorization: `Bearer ${refreshedAccessToken}`,
                 },
             });
 
-            console.log('Patient Data:', response.data);
-            // Update the AccessTokenList with the refreshed access token
+            console.log('Patient Data:', patientDataResponse.data);
+
             setAccessTokenList(prevAccessTokenList => ({
                 ...prevAccessTokenList,
-                [facility]: refreshedAccessToken
+                [facilityCode]: refreshedAccessToken
             }));
-            // Update the PatientDataList with the fetched patient data
+
             setPatientDataList(prevPatientDataList => ({
                 ...prevPatientDataList,
-                [facility]: response.data
+                [facilityCode]: patientDataResponse.data
             }));
 
             setError(null); // Clear any previous error  
@@ -153,85 +141,60 @@ const App = () => {
 
             setAccessTokenList(prevAccessTokenList => {
                 const newAccessTokenList = { ...prevAccessTokenList };
-                delete newAccessTokenList[facility];
+                delete newAccessTokenList[facilityCode];
                 return newAccessTokenList;
             });
 
             setPatientDataList(prevPatientDataList => {
                 const newPatientDataList = { ...prevPatientDataList };
-                delete newPatientDataList[facility];
+                delete newPatientDataList[facilityCode];
                 return newPatientDataList;
             });
         }
     };
 
-    const refreshAccessToken = async (refreshToken, objectId, facilityCode, scopesString) => {
-        const url = appConfig.tokenURL;
-        // Define the list of scopes
-        // const scopes = [
-        //     "openid",
-        //     "offline_access",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/launch",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/fhirUser",
-        //     "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Patient.read",
-        //     "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.AllergyIntolerance.read",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Condition.read",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Immunization.read",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Observation.read",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Procedure.read",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.MedicationRequest.read",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Observation.read",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Location.read",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Practitioner.read",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.PractitionerRole.read",
-        //     //"https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Organization.read",
-        // ];
+    async function getScopesString(objectId) {
+        const url = appConfig.getFHIRScopeURL;
 
-        //// Join the scopes array into a single string with spaces
-        //const scopesString = scopes.join(' ');
-
-        const requestBody = new URLSearchParams({
-            grant_type: 'refresh_token',
-            client_id: appConfig.clientID,
-            //scope: appConfig.refreshTokenScope,
-            scope: scopesString,
-            refresh_token: refreshToken,
-            redirect_uri: appConfig.redirectURL,
-            objectId: objectId, // Add objectId  
-            facilityCode: facilityCode // Add facilityCode  
-        });
         try {
-            const response = await axios.post(url, requestBody, {
+            const response = await fetch(url, {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ objectId }),
             });
-            console.log('Refreshed Access Token:', response.data.access_token);
-            setRefreshToken(response.data.refresh_token); // Update the refresh token if it's included in the response  
-            return response.data.access_token;
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            return data.scope; // Assuming the API returns an object with a `scope` property  
         } catch (error) {
-            console.error('Error refreshing access token:', error);
-            throw error;
+            console.error("Failed to fetch scopesString:", error);
+            return null;
         }
-    };
+    }
 
     return (
-        <Router>
-            <MainComponent
-                user={user}
-                error={error}
-                handleLogin={handleLogin}
-                handleLogout={handleLogout}
-                loading={loading}
-                facilities={facilities}
-                patientDataList={patientDataList}
-            />
-            <Routes> {/* Updated from Switch to Routes */}
-                <Route path="/callback" element={<Callback />} /> {/* Updated from component to element */}
-                {/* Add other routes as needed */}
-            </Routes>
-        </Router>
+        <div className="App">
+            <header className="App-header">
+                <h1>Welcome to Demo App</h1>
+                <h2>Multiple FHIR service access with Azure B2C Authentication using custom policy</h2>
+                <LoginButton user={user} handleLogin={handleLogin} handleLogout={handleLogout} />
+                {error && <ErrorMessage error={error} />}
+                {loading ? (
+                    <Loader /> // Show loader when loading  
+                ) : (
+                    <div className="patient-info">
+                        {facilities.map((facility, index) => (
+                            <PatientInfo key={index} facility={facility} patientData={patientDataList[facility]} />
+                        ))}
+                    </div>
+                )}
+            </header>
+        </div>
     );
 };
 
