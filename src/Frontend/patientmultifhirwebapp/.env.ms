@@ -1,0 +1,11 @@
+REACT_APP_AUTHORITY_URL=https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin
+REACT_APP_CLIENT_ID=661862bb-946b-4580-8bec-b7ae75905ab6
+REACT_APP_REDIRECT_URL=https://green-sea-0cde26500.5.azurestaticapps.net
+REACT_APP_POST_LOGOUT_REDIRECT_URL=https://green-sea-0cde26500.5.azurestaticapps.net
+REACT_APP_TOKEN_URL=https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/token
+REACT_APP_FACILITIES=1001,1002,1003,1004
+REACT_APP_FHIR_SCOPES=openid,profile,offline_access,https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation,https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Patient.read
+REACT_APP_GETFHIRSCOPE_URL=https://smart-on-fhir-authhandler-func.azurewebsites.net/api/GetFHIRScope?code=ze3QL0zdQLIIg73Y9ifUnhrL06avzNqPz_bTZFGFE6TYAzFuZ-BMOw%3D%3D
+REACT_APP_KNOWN_AUTHORITIES=https://uvancehlpfdemo.b2clogin.com,https://uvancehlpfdemo.b2clogin.com/b2c_1a_signup_signin,https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin,https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin/v2.0
+AZURE_SUBSCRIPTION_ID=b13d394e-7f62-4504-b848-f0671fc40b42
+AZURE_TENANT_ID=16b3c013-d300-468d-ac64-7eda0820b6d3

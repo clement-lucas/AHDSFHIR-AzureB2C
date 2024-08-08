@@ -40,6 +40,7 @@ const msalConfig = {
             },
         },
     },
+    iframeHashTimeout: 20000,
 };
 
 const msalInstance = new PublicClientApplication(msalConfig);
