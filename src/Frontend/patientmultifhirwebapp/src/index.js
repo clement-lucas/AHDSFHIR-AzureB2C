@@ -7,17 +7,22 @@ import msalInstance from './msalConfig';
 import './index.css';
 import App from './App';
 
-// Get the container element    
-const container = document.getElementById('root');
+// Initialize MSAL instance before rendering the app  
+msalInstance.initialize().then(() => {
+    // Get the container element      
+    const container = document.getElementById('root');
 
-// Create a root    
-const root = createRoot(container);
+    // Create a root      
+    const root = createRoot(container);
 
-// Render the app    
-root.render(
-    <React.StrictMode>
-        <MsalProvider instance={msalInstance}>
-            <App />
-        </MsalProvider>
-    </React.StrictMode>
-);
+    // Render the app      
+    root.render(
+        <React.StrictMode>
+            <MsalProvider instance={msalInstance}>
+                <App />
+            </MsalProvider>
+        </React.StrictMode>
+    );
+}).catch(error => {
+    console.error('MSAL initialization error:', error);
+});  

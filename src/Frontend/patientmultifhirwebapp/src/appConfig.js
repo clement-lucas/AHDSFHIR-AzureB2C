@@ -10,6 +10,7 @@ const appConfig = {
     clientID: process.env.REACT_APP_CLIENT_ID,
     postLogoutRedirectURL: process.env.REACT_APP_POST_LOGOUT_REDIRECT_URL,
     getFHIRScopeURL: process.env.REACT_APP_GETFHIRSCOPE_URL,
+    deleteAuthorityURL: process.env.REACT_APP_DELETE_USER_AUTHORITY,
 };
 
 export default appConfig;

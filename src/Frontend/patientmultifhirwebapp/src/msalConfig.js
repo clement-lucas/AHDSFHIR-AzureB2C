@@ -1,4 +1,4 @@
-// src\Frontend\patientmultifhirwebapp\src\msalConfig.js
+// src\Frontend\patientmultifhirwebapp\src\msalConfig.js  
 
 import { PublicClientApplication } from '@azure/msal-browser';
 import appConfig from './appConfig';
@@ -9,13 +9,14 @@ const msalConfig = {
         authority: appConfig.authorityURL,
         redirectUri: appConfig.redirectURL,
         postLogoutRedirectUri: appConfig.postLogoutRedirectURL,
-        knownAuthorities: appConfig.knownAuthorities,
+        knownAuthorities: appConfig.knownAuthorities.concat(["uvancehlpfdemo.b2clogin.com"]),
     },
     cache: {
-        cacheLocation: 'localStorage',
-        storeAuthStateInCookie: true,
+        cacheLocation: "localStorage",
+        storeAuthStateInCookie: true
     },
     system: {
+        iframeHashTimeout: 50000,
         loggerOptions: {
             loggerCallback: (level, message, containsPii) => {
                 if (containsPii) {
@@ -40,9 +41,8 @@ const msalConfig = {
             },
         },
     },
-    iframeHashTimeout: 20000,
 };
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
-export default msalInstance;
+export default msalInstance;  

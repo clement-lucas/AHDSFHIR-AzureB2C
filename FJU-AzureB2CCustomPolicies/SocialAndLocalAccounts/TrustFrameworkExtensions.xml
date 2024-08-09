@@ -28,12 +28,6 @@
         <UserHelpText>The FHIR user URL.</UserHelpText>  
       </ClaimType>
 
-      <!-- <ClaimType Id="scp">  
-        <DisplayName>Scope</DisplayName>  
-        <DataType>string</DataType>
-        <UserHelpText>Custom Scope Claim</UserHelpText>  
-      </ClaimType> -->
-
     </ClaimsSchema>
 
   </BuildingBlocks>

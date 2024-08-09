@@ -1,7 +1,8 @@
-// src\Frontend\patientmultifhirwebapp\src\components\LoginButton\LoginButton.js
+// src\Frontend\patientmultifhirwebapp\src\components\LoginButton\LoginButton.js  
 
 import React from 'react';
 import { useMsal } from '@azure/msal-react';
+import appConfig from '../../appConfig'; // Import the appConfig  
 
 const LoginButton = ({ user }) => {
     const { instance } = useMsal();
@@ -22,10 +23,22 @@ const LoginButton = ({ user }) => {
         });
     };
 
+    const handleDeleteAccount = () => {
+        instance.loginRedirect({
+            authority: appConfig.deleteAuthorityURL,
+            scopes: ["openid"]
+        }).catch(error => {
+            console.error('Delete user error:', error);
+        });
+    };
+
     return (
         <div style={{ textAlign: 'center', padding: '10px' }}>
             {user ? (
-                <button onClick={handleLogout}>Logout</button>
+                <>
+                    <button onClick={handleLogout}>Logout</button>
+                    <button onClick={handleDeleteAccount}>Delete Account</button>
+                </>
             ) : (
                 <button onClick={handleLogin}>Login</button>
             )}
