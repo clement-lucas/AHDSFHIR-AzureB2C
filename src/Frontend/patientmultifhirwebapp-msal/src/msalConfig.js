@@ -9,14 +9,14 @@ const msalConfig = {
         authority: appConfig.authorityURL,
         redirectUri: appConfig.redirectURL,
         postLogoutRedirectUri: appConfig.postLogoutRedirectURL,
-        knownAuthorities: appConfig.knownAuthorities.concat(["uvancehlpfdemo.b2clogin.com"]),
+        knownAuthorities: appConfig.knownAuthorities,
     },
     cache: {
         cacheLocation: "localStorage",
         storeAuthStateInCookie: true
     },
     system: {
-        iframeHashTimeout: 50000,
+        iframeHashTimeout: 10000,
         loggerOptions: {
             loggerCallback: (level, message, containsPii) => {
                 if (containsPii) {
