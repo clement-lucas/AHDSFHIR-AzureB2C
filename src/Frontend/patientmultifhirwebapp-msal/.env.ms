@@ -1,7 +1,9 @@
 REACT_APP_AUTHORITY_URL=https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin
 REACT_APP_CLIENT_ID=661862bb-946b-4580-8bec-b7ae75905ab6
-REACT_APP_REDIRECT_URL=https://green-sea-0cde26500.5.azurestaticapps.net/callback
-REACT_APP_POST_LOGOUT_REDIRECT_URL=https://green-sea-0cde26500.5.azurestaticapps.net
+REACT_APP_REDIRECT_URL=http://localhost:3000/callback
+REACT_APP_POST_LOGOUT_REDIRECT_URL=http://localhost:3000
+#REACT_APP_REDIRECT_URL=https://green-sea-0cde26500.5.azurestaticapps.net/callback
+#REACT_APP_POST_LOGOUT_REDIRECT_URL=https://green-sea-0cde26500.5.azurestaticapps.net
 REACT_APP_TOKEN_URL=https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/token
 REACT_APP_FACILITIES=1001,1002,1003,1004
 REACT_APP_FHIR_SCOPES=openid,profile,offline_access,https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation,https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Patient.read

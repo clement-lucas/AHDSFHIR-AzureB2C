@@ -9,7 +9,7 @@ const msalConfig = {
         authority: appConfig.authorityURL,
         redirectUri: appConfig.redirectURL,
         postLogoutRedirectUri: appConfig.postLogoutRedirectURL,
-        knownAuthorities: appConfig.knownAuthorities,
+        knownAuthorities: appConfig.knownAuthorities.concat(["uvancehlpfdemo.b2clogin.com"]),
     },
     cache: {
         cacheLocation: "localStorage",

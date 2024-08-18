@@ -1,13 +1,11 @@
 // src\Frontend\patientmultifhirwebapp\src\App.js
 
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { MsalProvider, useIsAuthenticated, useMsal } from '@azure/msal-react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode'; // Correct import  
 import msalInstance from './msalConfig';
 import './styles.css';
-import MainComponent from './components/MainComponent/MainComponent';
 import appConfig from './appConfig';
 import LoginButton from './components/LoginButton/LoginButton';
 import Loader from './components/Loader/Loader';
@@ -18,12 +16,7 @@ const facilities = appConfig.facilities;
 
 const App = () => (
     <MsalProvider instance={msalInstance}>
-        <Router>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                {/* Add other routes as needed */}
-            </Routes>
-        </Router>
+        <Home />
     </MsalProvider>
 );
 
@@ -40,7 +33,7 @@ const Home = () => {
         if (isAuthenticated) {
             const account = accounts[0];
             setUser(account);
-            fetchAllPatientData(account); // Fetch data for all facilities when user is loaded  
+            fetchAllPatientData(account); // Fetch data for all facilities when user is loaded    
         }
     }, [isAuthenticated, accounts]);
 
@@ -65,11 +58,9 @@ const Home = () => {
 
         try {
             if (account) {
-
-
-                await Promise.all(facilities.map(
-                    facility => fetchPatientData(account, facility)
-                ));
+                for (const facility of facilities) {
+                    await fetchPatientData(account, facility);
+                }
             }
         } catch (e) {
             console.error('Error:', e);
@@ -85,15 +76,17 @@ const Home = () => {
         console.log('objectId:', user.idTokenClaims.oid, 'facilityCode:', facilityCode);
 
         try {
+            // Attempt to acquire token silently with ssoSilent to force token refresh  
             const response = await instance.ssoSilent({
                 authority: appConfig.authorityURL,
                 scopes: appConfig.scopes,
+                redirectUri: appConfig.redirectURL,
                 account: user,
                 forceRefresh: true,
                 extraQueryParameters: {
                     objectId: user.idTokenClaims.oid,
                     facilityCode: facilityCode
-                }
+                },
             });
 
             const refreshedAccessToken = response.accessToken;
@@ -112,6 +105,15 @@ const Home = () => {
                 },
             });
 
+            // const patientId = fhirUrl.split('/').pop(); // Extract patient resource ID
+            // const apimUrl = `https://desp-stg2-com-hdsdev-apim.azure-api.net/fhir/1001/Patient/${patientId}`; // Replace with APIM URL
+
+            // const patientDataResponse = await axios.get(apimUrl, {
+            //     headers: {
+            //         Authorization: `Bearer ${refreshedAccessToken}`,
+            //     },
+            // });
+
             console.log('Patient Data:', patientDataResponse.data);
 
             setAccessTokenList(prevAccessTokenList => ({
@@ -128,25 +130,24 @@ const Home = () => {
 
         } catch (error) {
             console.error('Error fetching patient data:', error);
-
-            if (error.response && error.response.status === 403) {
-                setError('An error occurred while fetching patient data. Looks like Access token claim issue. Please try again.');
-            } else {
-                setError('An error occurred while fetching patient data. Please try again.');
-            }
-
-            setAccessTokenList(prevAccessTokenList => {
-                const newAccessTokenList = { ...prevAccessTokenList };
-                delete newAccessTokenList[facilityCode];
-                return newAccessTokenList;
-            });
-
-            setPatientDataList(prevPatientDataList => {
-                const newPatientDataList = { ...prevPatientDataList };
-                delete newPatientDataList[facilityCode];
-                return newPatientDataList;
-            });
+            handleFetchError(facilityCode);
         }
+    };
+
+    const handleFetchError = (facilityCode) => {
+        setAccessTokenList(prevAccessTokenList => {
+            const newAccessTokenList = { ...prevAccessTokenList };
+            delete newAccessTokenList[facilityCode];
+            return newAccessTokenList;
+        });
+
+        setPatientDataList(prevPatientDataList => {
+            const newPatientDataList = { ...prevPatientDataList };
+            delete newPatientDataList[facilityCode];
+            return newPatientDataList;
+        });
+
+        setError('An error occurred while fetching patient data. Please try again.');
     };
 
     return (
@@ -157,7 +158,7 @@ const Home = () => {
                 <LoginButton user={user} handleLogin={handleLogin} handleLogout={handleLogout} />
                 {error && <ErrorMessage error={error} />}
                 {loading ? (
-                    <Loader /> // Show loader when loading  
+                    <Loader /> // Show loader when loading    
                 ) : (
                     <div className="patient-info">
                         {facilities.map((facility, index) => (

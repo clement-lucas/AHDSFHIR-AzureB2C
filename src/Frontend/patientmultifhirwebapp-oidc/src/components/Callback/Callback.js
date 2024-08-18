@@ -13,7 +13,7 @@ const Callback = () => {
     useEffect(() => {
         userManager.signinRedirectCallback().then(user => {
             console.log('User loaded after callback:', user);
-            navigate(); // Redirect to home page after successful login  
+            navigate('/'); // Redirect to home page after successful login  
         }).catch(error => {
             console.error('Error during the callback handling:', error);
         });
