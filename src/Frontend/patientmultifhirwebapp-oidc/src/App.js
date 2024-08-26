@@ -1,10 +1,8 @@
 // src/App.js
 
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import userManager from './authConfig';
 import appConfig from './appConfig';
-import Callback from './components/Callback/Callback';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import './styles.css';
@@ -17,42 +15,83 @@ const App = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState(null);
+    const [initialized, setInitialized] = useState(false);
+
 
     useEffect(() => {
-        userManager.events.addUserLoaded(user => {
+        const handleUserLoad = (user) => {
             console.log('User loaded', user);
             setUser(user);
-            fetchAllPatientData(user.refresh_token); // Fetch data for all facilities when user is loaded
-        });
-        userManager.events.addUserUnloaded(() => {
+        };
+
+        const handleUserUnload = () => {
             console.log('User unloaded');
             setUser(null);
-        });
-        userManager.getUser().then(user => {
-            if (user) {
-                console.log('User:', user);
+        };
+
+        if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
+            userManager.signinRedirectCallback().then(user => {
+                console.log('User signin redirect successful');
                 setUser(user);
-                fetchAllPatientData(user.refresh_token); // Fetch data for all facilities when user is loaded
-            }
-        }).catch(error => {
-            console.error('Error getting user:', error);
-        });
-    }, []);
+                if (!initialized) {
+                    fetchAllPatientData(user.refresh_token);
+                    setInitialized(true);
+                }
+                // Clear the URL parameters  
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }).catch(error => {
+                console.error('Error handling redirect callback', error);
+            });
+        } else {
+            userManager.getUser().then(user => {
+                if (user && !initialized) {
+                    console.log('User:', user);
+                    setUser(user);
+                    fetchAllPatientData(user.refresh_token);
+                    setInitialized(true);
+                }
+            }).catch(error => {
+                console.error('Error getting user:', error);
+            });
+        }
+
+        userManager.events.addUserLoaded(handleUserLoad);
+        userManager.events.addUserUnloaded(handleUserUnload);
+
+        return () => {
+            userManager.events.removeUserLoaded(handleUserLoad);
+            userManager.events.removeUserUnloaded(handleUserUnload);
+        };
+    }, [initialized]);
 
     const handleLogin = () => {
         userManager.signinRedirect();
     };
 
     const handleLogout = () => {
-        // Clear the local state
+        // Clear the local state  
         setPatientDataList([]);
         setError(null);
         setLoading(false);
         setUser(null);
-
+        setInitialized(false);
         // Perform the logout  
         userManager.signoutRedirect();
     };
+
+    const handleDeleteAccount = () => {
+        userManager.signinRedirect({
+            authority: appConfig.deleteAuthorityURL,
+            scope: "openid",
+            response_type: "code",
+            redirect_uri: appConfig.redirectURL,
+            post_logout_redirect_uri: appConfig.postLogoutRedirectURL // where to redirect after deletion  
+        }).catch(error => {
+            console.error('Delete user error:', error);
+            setError('An error occurred while deleting the account. Please try again.');
+        });
+    };
+
 
     const fetchAllPatientData = async (refreshToken) => {
         setLoading(true);
@@ -79,7 +118,6 @@ const App = () => {
 
             // Refresh the access token first
             const refreshedAccessToken = await refreshAccessToken(refreshToken, user.profile.sub, facility);
-            console.log('Refreshed Access Token:', refreshedAccessToken);
 
             // Decode the refreshed access token to get the fhirUrl 
             const decodedToken = jwtDecode(refreshedAccessToken);
@@ -90,8 +128,25 @@ const App = () => {
             if (!fhirUrl) {
                 throw new Error('FHIR URL not found in token');
             }
-            // Use the refreshed access token to fetch the FHIR data
-            const response = await axios.get(fhirUrl, {
+
+            // Extract the facility code from the FHIR URL  
+            const facilityCode = facility; // Assuming facility code is passed correctly  
+            if (!facilityCode) {
+                throw new Error('Facility code not found');
+            }
+
+            // Uncomment this block if you want to fetch patient data directly from FHIR server instead of using APIM.
+            // const response = await axios.get(fhirUrl, {
+            //     headers: {
+            //         Authorization: `Bearer ${refreshedAccessToken}`,
+            //     },
+            // });
+
+            // Comment this block if you want to fetch patient data directly from FHIR server instead of using APIM.
+            const patientId = fhirUrl.split('/').pop(); // Extract patient resource ID  
+            const apimUrl = `${appConfig.apimBaseUrl}/${facilityCode}/Patient/${patientId}`;
+            // Fetch the patient data using the constructed APIM URL 
+            const response = await axios.get(apimUrl, {
                 headers: {
                     Authorization: `Bearer ${refreshedAccessToken}`,
                 },
@@ -152,20 +207,16 @@ const App = () => {
     };
 
     return (
-        <Router>
-            <MainComponent
-                user={user}
-                error={error}
-                handleLogin={handleLogin}
-                handleLogout={handleLogout}
-                loading={loading}
-                facilities={facilities}
-                patientDataList={patientDataList}
-            />
-            <Routes>
-                <Route path="/callback" element={<Callback />} />
-            </Routes>
-        </Router>
+        <MainComponent
+            user={user}
+            error={error}
+            handleLogin={handleLogin}
+            handleLogout={handleLogout}
+            handleDeleteAccount={handleDeleteAccount}
+            loading={loading}
+            facilities={facilities}
+            patientDataList={patientDataList}
+        />
     );
 };
 

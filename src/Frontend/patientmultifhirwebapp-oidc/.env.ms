@@ -1,12 +1,13 @@
 REACT_APP_AUTHORITY_URL=https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin/v2.0
 REACT_APP_CLIENT_ID=661862bb-946b-4580-8bec-b7ae75905ab6
-REACT_APP_REDIRECT_URL=http://localhost:3000/callback
+REACT_APP_REDIRECT_URL=http://localhost:3000
 REACT_APP_HOME_URL=http://localhost:3000
-#REACT_APP_REDIRECT_URL=https://green-sea-0cde26500.5.azurestaticapps.net/callback
+#REACT_APP_REDIRECT_URL=https://green-sea-0cde26500.5.azurestaticapps.net
 #REACT_APP_HOME_URL=https://green-sea-0cde26500.5.azurestaticapps.net
 REACT_APP_TOKEN_URL=https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/token
 REACT_APP_OIDC_LOGINSCOPE=openid,profile
 REACT_APP_REFRESHTOKEN_SCOPE=openid,offline_access,https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Patient.read,https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation
 REACT_APP_FACILITIES=1001,1002,1003,1004
+REACT_APP_APIM_BASE_URL=https://desp-stg2-com-hdsdev-apim.azure-api.net/fhir
 AZURE_SUBSCRIPTION_ID=b13d394e-7f62-4504-b848-f0671fc40b42
 AZURE_TENANT_ID=16b3c013-d300-468d-ac64-7eda0820b6d3

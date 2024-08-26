@@ -2,7 +2,8 @@
 <TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" 
   TenantId="despenduserstg.onmicrosoft.com" 
   PolicyId="B2C_1A_DeleteUser" 
-  PublicPolicyUri="http://despenduserstg.onmicrosoft.com/B2C_1A_DeleteUser">
+  PublicPolicyUri="http://despenduserstg.onmicrosoft.com/B2C_1A_DeleteUser"
+  DeploymentMode = "Development">
 
   <BasePolicy>
     <TenantId>despenduserstg.onmicrosoft.com</TenantId>
@@ -186,6 +187,38 @@
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
+
+    <ClaimsProvider>  
+      <DisplayName>REST APIs</DisplayName>  
+      <TechnicalProfiles>  
+          <TechnicalProfile Id="REST-DeleteUserAPI">  
+            <DisplayName>Delete User API</DisplayName>  
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />  
+            <Metadata>  
+                <Item Key="ServiceUrl">https://desp-st2-smart-on-fhir-authhandler-func.azurewebsites.net/api/DeleteFHIRUserStub?code=nT3rrOzfCiASOwyC4WxVB9WpJq2NNOQnheS6QA57luqXAzFuR3snLQ%3D%3D</Item>  
+                <Item Key="SendClaimsIn">Body</Item>  
+                <!-- Set AuthenticationType to Basic or ClientCertificate in production environments -->  
+                <Item Key="AuthenticationType">ClientCertificate</Item>  
+                <!-- REMOVE the following line in production environments -->  
+                <Item Key="AllowInsecureAuthInProduction">false</Item>  
+                <Item Key="DebugMode">true</Item>  
+            </Metadata>  
+            <CryptographicKeys>  
+                <Key Id="ClientCertificate" StorageReferenceId="B2C_1A_DBWrapperApiClientCertificateTemp" />  
+            </CryptographicKeys>  
+            <InputClaims>  
+                <!-- Claims sent to REST API -->  
+                <InputClaim ClaimTypeReferenceId="objectId" />  
+            </InputClaims>  
+            <OutputClaims>  
+                <!-- Claims parsed from REST API if needed -->
+                <!-- <OutputClaim ClaimTypeReferenceId="apiResponseClaimType" />  -->
+            </OutputClaims>  
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />  
+          </TechnicalProfile>  
+      </TechnicalProfiles>  
+    </ClaimsProvider>
+
   </ClaimsProviders>
   <UserJourneys>
     <UserJourney Id="DeleteAccount">
@@ -265,7 +298,14 @@
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <OrchestrationStep Order="8" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        <!-- Call the REST API to delete Patient/User details in FHIR service -->  
+        <OrchestrationStep Order="8" Type="ClaimsExchange">  
+            <ClaimsExchanges>  
+                <ClaimsExchange Id="REST-DeleteUserAPI" TechnicalProfileReferenceId="REST-DeleteUserAPI" />  
+            </ClaimsExchanges>  
+        </OrchestrationStep> 
+
+        <OrchestrationStep Order="9" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
 
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />

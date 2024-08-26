@@ -10,6 +10,8 @@ const appConfig = {
     redirectURL: process.env.REACT_APP_REDIRECT_URL,
     homeURL: process.env.REACT_APP_HOME_URL,
     clientID: process.env.REACT_APP_CLIENT_ID,
+    deleteAuthorityURL: process.env.REACT_APP_DELETE_USER_AUTHORITY,
+    apimBaseUrl: process.env.REACT_APP_APIM_BASE_URL
 };
 
 export default appConfig;

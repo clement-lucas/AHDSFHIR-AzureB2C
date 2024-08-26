@@ -103,11 +103,14 @@
             <Item Key="ServiceUrl">https://smart-on-fhir-authhandler-func.azurewebsites.net/api/GetFHIRScope?code=ze3QL0zdQLIIg73Y9ifUnhrL06avzNqPz_bTZFGFE6TYAzFuZ-BMOw%3D%3D</Item>  
             <Item Key="SendClaimsIn">Body</Item>
             <!-- Set AuthenticationType to Basic or ClientCertificate in production environments -->
-            <Item Key="AuthenticationType">None</Item>
+            <Item Key="AuthenticationType">ClientCertificate</Item>
             <!-- REMOVE the following line in production environments -->
             <Item Key="AllowInsecureAuthInProduction">true</Item>
             <Item Key="DebugMode">true</Item>
           </Metadata>
+          <CryptographicKeys>
+            <Key Id="ClientCertificate" StorageReferenceId="B2C_1A_RestApiClientCertificate" />
+          </CryptographicKeys>
           <InputClaims>
 			      <!-- Claims sent to REST API -->
             <InputClaim ClaimTypeReferenceId="objectId" />            
