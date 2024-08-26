@@ -12,6 +12,13 @@
 
   <BuildingBlocks>
     <ClaimsSchema>
+
+      <ClaimType Id="status">  
+        <DisplayName>Status</DisplayName>  
+        <DataType>string</DataType>
+        <UserHelpText>Status of deleting FHIR User in FHIR services</UserHelpText>  
+      </ClaimType>
+
       <!--Sample: Stores the message to dispaly to the user-->
       <ClaimType Id="userMessage">
         <DisplayName />
@@ -200,7 +207,7 @@
                 <!-- Set AuthenticationType to Basic or ClientCertificate in production environments -->  
                 <Item Key="AuthenticationType">ClientCertificate</Item>  
                 <!-- REMOVE the following line in production environments -->  
-                <Item Key="AllowInsecureAuthInProduction">false</Item>  
+                <Item Key="AllowInsecureAuthInProduction">true</Item>  
                 <Item Key="DebugMode">true</Item>  
             </Metadata>  
             <CryptographicKeys>  
@@ -212,8 +219,9 @@
             </InputClaims>  
             <OutputClaims>  
                 <!-- Claims parsed from REST API if needed -->
-                <!-- <OutputClaim ClaimTypeReferenceId="apiResponseClaimType" />  -->
-            </OutputClaims>  
+                <OutputClaim ClaimTypeReferenceId="objectId" />  
+                <OutputClaim ClaimTypeReferenceId="status" /> 
+            </OutputClaims>
             <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />  
           </TechnicalProfile>  
       </TechnicalProfiles>  
@@ -291,19 +299,19 @@
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <!-- Sample: This step present the account has been deleted message -->
-        <OrchestrationStep Order="7" Type="ClaimsExchange">
-          <ClaimsExchanges>
-            <ClaimsExchange Id="SelfAsserted-AccountHasBeenDeleted" TechnicalProfileReferenceId="SelfAsserted-AccountHasBeenDeleted" />
-          </ClaimsExchanges>
-        </OrchestrationStep>
-
         <!-- Call the REST API to delete Patient/User details in FHIR service -->  
         <OrchestrationStep Order="8" Type="ClaimsExchange">  
             <ClaimsExchanges>  
                 <ClaimsExchange Id="REST-DeleteUserAPI" TechnicalProfileReferenceId="REST-DeleteUserAPI" />  
             </ClaimsExchanges>  
         </OrchestrationStep> 
+
+        <!-- Sample: This step present the account has been deleted message -->
+        <OrchestrationStep Order="7" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SelfAsserted-AccountHasBeenDeleted" TechnicalProfileReferenceId="SelfAsserted-AccountHasBeenDeleted" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
 
         <OrchestrationStep Order="9" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
 
@@ -322,6 +330,7 @@
         <OutputClaim ClaimTypeReferenceId="surname" />
         <OutputClaim ClaimTypeReferenceId="email" />
         <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub" />
+        <OutputClaim ClaimTypeReferenceId="status" />
         <OutputClaim ClaimTypeReferenceId="identityProvider" />
         <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
       </OutputClaims>

@@ -6,7 +6,7 @@ import Loader from '../Loader/Loader'; // Adjust the import path as necessary
 import PatientInfo from '../PatientInfo/PatientInfo'; // Adjust the import path as necessary
 import ErrorMessage from '../ErrorMessage/ErrorMessage'; // Adjust the import path as necessary
 
-function MainComponent({ user, error, handleLogin, handleLogout, handleDeleteAccount, loading, facilities, patientDataList }) {
+function MainComponent({ user, error, handleLogin, handleLogout, handleDeleteUser, loading, facilities, patientDataList }) {
     return (
         <div className="App">
             <header className="App-header">
@@ -14,7 +14,7 @@ function MainComponent({ user, error, handleLogin, handleLogout, handleDeleteAcc
                 <h2>Multiple FHIR service access with Azure B2C Authentication using custom policy</h2>
 
                 <div>
-                    <LoginButton user={user} handleLogin={handleLogin} handleLogout={handleLogout} handleDeleteAccount={handleDeleteAccount} />
+                    <LoginButton user={user} handleLogin={handleLogin} handleLogout={handleLogout} handleDeleteUser={handleDeleteUser} />
                     {error && <ErrorMessage error={error} />}
                     {loading ? (
                         <Loader /> // Show loader when loading  

@@ -3,6 +3,7 @@
 const appConfig = {
     facilities: process.env.REACT_APP_FACILITIES ? process.env.REACT_APP_FACILITIES.split(',') : [],
     oidcLoginScope: process.env.REACT_APP_OIDC_LOGINSCOPE ? process.env.REACT_APP_OIDC_LOGINSCOPE.split(',').join(' ') : '',
+    oidcDeleteUserScope: process.env.REACT_APP_OIDC_DELETEUSERSCOPE ? process.env.REACT_APP_OIDC_DELETEUSERSCOPE.split(',').join(' ') : '',
     refreshTokenScope: process.env.REACT_APP_REFRESHTOKEN_SCOPE ? process.env.REACT_APP_REFRESHTOKEN_SCOPE.split(',').join(' ') : '',
     oidcResponseType: 'code',
     authorityURL: process.env.REACT_APP_AUTHORITY_URL,

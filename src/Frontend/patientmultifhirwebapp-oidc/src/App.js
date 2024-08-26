@@ -1,7 +1,7 @@
 // src/App.js
 
 import React, { useState, useEffect } from 'react';
-import userManager from './authConfig';
+import { signInSignUpManager, deleteUserManager } from './authConfig';
 import appConfig from './appConfig';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
@@ -29,43 +29,52 @@ const App = () => {
             setUser(null);
         };
 
-        if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
-            userManager.signinRedirectCallback().then(user => {
-                console.log('User signin redirect successful');
-                setUser(user);
-                if (!initialized) {
-                    fetchAllPatientData(user.refresh_token);
-                    setInitialized(true);
-                }
-                // Clear the URL parameters  
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }).catch(error => {
-                console.error('Error handling redirect callback', error);
-            });
-        } else {
-            userManager.getUser().then(user => {
-                if (user && !initialized) {
-                    console.log('User:', user);
+        const handleRedirectCallback = () => {
+            if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
+                signInSignUpManager.signinRedirectCallback().then(user => {
+                    console.log('User signin redirect successful');
                     setUser(user);
-                    fetchAllPatientData(user.refresh_token);
-                    setInitialized(true);
-                }
-            }).catch(error => {
-                console.error('Error getting user:', error);
-            });
-        }
+                    if (!initialized) {
+                        fetchAllPatientData(user.refresh_token);
+                        setInitialized(true);
+                    }
+                    // Clear the URL parameters  
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }).catch(error => {
+                    console.error('Error handling redirect callback', error);
+                });
+            }
+        };
 
-        userManager.events.addUserLoaded(handleUserLoad);
-        userManager.events.addUserUnloaded(handleUserUnload);
+        handleRedirectCallback();
+
+        signInSignUpManager.getUser().then(user => {
+            if (user && !initialized) {
+                console.log('User:', user);
+                setUser(user);
+                fetchAllPatientData(user.refresh_token);
+                setInitialized(true);
+            }
+        }).catch(error => {
+            console.error('Error getting user:', error);
+        });
+
+        signInSignUpManager.events.addUserLoaded(handleUserLoad);
+        signInSignUpManager.events.addUserUnloaded(handleUserUnload);
 
         return () => {
-            userManager.events.removeUserLoaded(handleUserLoad);
-            userManager.events.removeUserUnloaded(handleUserUnload);
+            signInSignUpManager.events.removeUserLoaded(handleUserLoad);
+            signInSignUpManager.events.removeUserUnloaded(handleUserUnload);
         };
     }, [initialized]);
 
+
     const handleLogin = () => {
-        userManager.signinRedirect();
+        signInSignUpManager.signinRedirect();
+    };
+
+    const handleDeleteUser = () => {
+        deleteUserManager.signinRedirect();
     };
 
     const handleLogout = () => {
@@ -76,29 +85,15 @@ const App = () => {
         setUser(null);
         setInitialized(false);
         // Perform the logout  
-        userManager.signoutRedirect();
+        signInSignUpManager.signoutRedirect();
     };
-
-    const handleDeleteAccount = () => {
-        userManager.signinRedirect({
-            authority: appConfig.deleteAuthorityURL,
-            scope: "openid",
-            response_type: "code",
-            redirect_uri: appConfig.redirectURL,
-            post_logout_redirect_uri: appConfig.postLogoutRedirectURL // where to redirect after deletion  
-        }).catch(error => {
-            console.error('Delete user error:', error);
-            setError('An error occurred while deleting the account. Please try again.');
-        });
-    };
-
 
     const fetchAllPatientData = async (refreshToken) => {
         setLoading(true);
         setError(null); // Clear any previous error
 
         try {
-            const user = await userManager.getUser();
+            const user = await signInSignUpManager.getUser();
             if (user) {
                 await Promise.all(facilities.map(
                     facility => fetchPatientData(refreshToken, user, facility)
@@ -212,7 +207,7 @@ const App = () => {
             error={error}
             handleLogin={handleLogin}
             handleLogout={handleLogout}
-            handleDeleteAccount={handleDeleteAccount}
+            handleDeleteUser={handleDeleteUser}
             loading={loading}
             facilities={facilities}
             patientDataList={patientDataList}
