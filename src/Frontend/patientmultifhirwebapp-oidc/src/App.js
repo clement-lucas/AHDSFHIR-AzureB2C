@@ -17,7 +17,6 @@ const App = () => {
     const [user, setUser] = useState(null);
     const [initialized, setInitialized] = useState(false);
 
-
     useEffect(() => {
         const handleUserLoad = (user) => {
             console.log('User loaded', user);
@@ -74,7 +73,16 @@ const App = () => {
     };
 
     const handleDeleteUser = () => {
-        deleteUserManager.signinRedirect();
+        if (user && user.profile && user.profile.sub) {
+            deleteUserManager.signinRedirect({
+                extraQueryParams: {
+                    objectId: user.profile.sub
+                }
+            }).catch(error => {
+                console.error('Delete user error:', error);
+                setError('An error occurred while deleting the account. Please try again.');
+            });
+        }
     };
 
     const handleLogout = () => {

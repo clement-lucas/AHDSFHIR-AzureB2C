@@ -512,8 +512,8 @@
           <Protocol Name="OpenIdConnect" />
           <Metadata>
             <Item Key="ProviderName">https://sts.windows.net/</Item>
-            <Item Key="METADATA">https://despenduserstg.b2clogin.com/despenduserstg.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration</Item>
-            <Item Key="authorization_endpoint">https://despenduserstg.b2clogin.com/despenduserstg.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/token</Item>
+            <Item Key="METADATA">https://login.microsoftonline.com/despenduserstg.onmicrosoft.com/.well-known/openid-configuration</Item>
+            <Item Key="authorization_endpoint">https://login.microsoftonline.com/despenduserstg.onmicrosoft.com/oauth2/token</Item>
             <Item Key="response_types">id_token</Item>
             <Item Key="response_mode">query</Item>
             <Item Key="scope">email openid</Item>

@@ -300,14 +300,14 @@
         </OrchestrationStep>
 
         <!-- Call the REST API to delete Patient/User details in FHIR service -->  
-        <OrchestrationStep Order="8" Type="ClaimsExchange">  
-            <ClaimsExchanges>  
-                <ClaimsExchange Id="REST-DeleteUserAPI" TechnicalProfileReferenceId="REST-DeleteUserAPI" />  
-            </ClaimsExchanges>  
-        </OrchestrationStep> 
+        <OrchestrationStep Order="7" Type="ClaimsExchange">
+          <ClaimsExchanges>
+              <ClaimsExchange Id="REST-DeleteUserAPI" TechnicalProfileReferenceId="REST-DeleteUserAPI" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
 
         <!-- Sample: This step present the account has been deleted message -->
-        <OrchestrationStep Order="7" Type="ClaimsExchange">
+        <OrchestrationStep Order="8" Type="ClaimsExchange">
           <ClaimsExchanges>
             <ClaimsExchange Id="SelfAsserted-AccountHasBeenDeleted" TechnicalProfileReferenceId="SelfAsserted-AccountHasBeenDeleted" />
           </ClaimsExchanges>
