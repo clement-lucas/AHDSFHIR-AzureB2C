@@ -1,9 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" 
+<TrustFrameworkPolicy 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
+  PolicySchemaVersion="0.3.0.0"
   TenantId="despenduserstg.onmicrosoft.com" 
   PolicyId="B2C_1A_DeleteUser" 
   PublicPolicyUri="http://despenduserstg.onmicrosoft.com/B2C_1A_DeleteUser"
-  DeploymentMode = "Development">
+  DeploymentMode = "Production">
 
   <BasePolicy>
     <TenantId>despenduserstg.onmicrosoft.com</TenantId>
@@ -11,9 +15,10 @@
   </BasePolicy>
 
   <BuildingBlocks>
-    <ClaimsSchema>
 
-      <ClaimType Id="status">  
+    <ClaimsSchema>
+      
+      <ClaimType Id="status">
         <DisplayName>Status</DisplayName>  
         <DataType>string</DataType>
         <UserHelpText>Status of deleting FHIR User in FHIR services</UserHelpText>  
@@ -35,12 +40,13 @@
         <UserInputType>Paragraph</UserInputType>
       </ClaimType>
 
-      <!--Sample: Work around for a self-asserted page without claims -->
+      <!--Sample: Work around for a self-asserted page without Claims -->
       <ClaimType Id="emptyClaim">
         <DisplayName></DisplayName>
         <DataType>string</DataType>
         <UserInputType>Readonly</UserInputType>
       </ClaimType>
+
     </ClaimsSchema>
 
     <ClaimsTransformations>
@@ -90,6 +96,7 @@
         </OutputClaims>
       </ClaimsTransformation>
     </ClaimsTransformations>
+
   </BuildingBlocks>
 
   <ClaimsProviders>
@@ -126,9 +133,9 @@
     <ClaimsProvider>
       <DisplayName>Self-Asserted</DisplayName>
       <TechnicalProfiles>
-        <!--Sample: Display the welcome page-->
+        <!--Sample: Display the welcome page -->
         <TechnicalProfile Id="SelfAsserted-Welcome">
-          <DisplayName>Welcome to FIDO enrollment</DisplayName>
+          <DisplayName>Display the welcome page</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
@@ -148,9 +155,9 @@
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
 
-        <!--Sample: Display the your account has been deleted message-->
+        <!--Sample: Display your account has been deleted message-->
         <TechnicalProfile Id="SelfAsserted-AccountHasBeenDeleted">
-          <DisplayName>Welcome to FIDO enrollment</DisplayName>
+          <DisplayName> Display Account Delete Message</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
@@ -172,9 +179,9 @@
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
 
-        <!--Sample: Display user not found error message message-->
+        <!--Sample: Display user not found error message -->
         <TechnicalProfile Id="SelfAsserted-UserNotFound">
-          <DisplayName>Welcome to FIDO enrollment</DisplayName>
+          <DisplayName>Display User not found Message</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
@@ -196,7 +203,7 @@
     </ClaimsProvider>
 
     <ClaimsProvider>  
-      <DisplayName>REST APIs</DisplayName>  
+      <DisplayName>REST-DeleteUserAPI</DisplayName>  
       <TechnicalProfiles>  
           <TechnicalProfile Id="REST-DeleteUserAPI">  
             <DisplayName>Delete User API</DisplayName>  
@@ -207,8 +214,8 @@
                 <!-- Set AuthenticationType to Basic or ClientCertificate in production environments -->  
                 <Item Key="AuthenticationType">ClientCertificate</Item>  
                 <!-- REMOVE the following line in production environments -->  
-                <Item Key="AllowInsecureAuthInProduction">true</Item>  
-                <Item Key="DebugMode">true</Item>  
+                <Item Key="AllowInsecureAuthInProduction">false</Item>  
+                <Item Key="DebugMode">false</Item>  
             </Metadata>  
             <CryptographicKeys>  
                 <Key Id="ClientCertificate" StorageReferenceId="B2C_1A_DBWrapperApiClientCertificateTemp" />  
@@ -228,7 +235,9 @@
     </ClaimsProvider>
 
   </ClaimsProviders>
+
   <UserJourneys>
+
     <UserJourney Id="DeleteAccount">
       <OrchestrationSteps>
 
@@ -318,7 +327,9 @@
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>
+
   </UserJourneys>
+
   <RelyingParty>
     <DefaultUserJourney ReferenceId="DeleteAccount" />
     <TechnicalProfile Id="PolicyProfile">

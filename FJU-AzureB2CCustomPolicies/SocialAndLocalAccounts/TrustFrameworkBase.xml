@@ -7,7 +7,7 @@
   TenantId="despenduserstg.onmicrosoft.com"
   PolicyId="B2C_1A_TrustFrameworkBase"
   PublicPolicyUri="http://despenduserstg.onmicrosoft.com/B2C_1A_TrustFrameworkBase"
-  DeploymentMode = "Development">
+  DeploymentMode = "Production">
 
   <BuildingBlocks>
     <ClaimsSchema>
@@ -516,7 +516,7 @@
             <Item Key="authorization_endpoint">https://login.microsoftonline.com/despenduserstg.onmicrosoft.com/oauth2/token</Item>
             <Item Key="response_types">id_token</Item>
             <Item Key="response_mode">query</Item>
-            <Item Key="scope">email openid</Item>
+            <Item Key="scope">email openid</Item>            
             <!-- <Item Key="grant_type">password</Item> -->
 
             <!-- Policy Engine Clients -->
@@ -770,8 +770,8 @@
                  In addition, if a claim is not in the InputClaims section, but it is in the OutputClaims section, then its
                  value will not be prefilled, but the user will still be prompted for it (with an empty value). -->
             <InputClaim ClaimTypeReferenceId="displayName" />
-            <InputClaim ClaimTypeReferenceId="givenName" />
-            <InputClaim ClaimTypeReferenceId="surname" />
+            <!-- <InputClaim ClaimTypeReferenceId="givenName" />
+            <InputClaim ClaimTypeReferenceId="surname" /> -->
           </InputClaims>
           <OutputClaims>
             <!-- These claims are not shown to the user because their value is obtained through the "ValidationTechnicalProfiles"
@@ -785,8 +785,8 @@
                  collected from the user, it needs to be added as a PersistedClaim in the ValidationTechnicalProfile referenced below, i.e. 
                  in AAD-UserWriteUsingAlternativeSecurityId. -->
             <OutputClaim ClaimTypeReferenceId="displayName" />
-            <OutputClaim ClaimTypeReferenceId="givenName" />
-            <OutputClaim ClaimTypeReferenceId="surname" />
+            <!-- <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surname" /> -->
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingAlternativeSecurityId" />
@@ -854,8 +854,8 @@
 
             <!-- Optional claims, to be collected from the user -->
             <OutputClaim ClaimTypeReferenceId="displayName" />
-            <OutputClaim ClaimTypeReferenceId="givenName" />
-            <OutputClaim ClaimTypeReferenceId="surName" />
+            <!-- <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surName" /> -->
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
@@ -871,7 +871,7 @@
             <Item Key="SignUpTarget">SignUpWithLogonEmailExchange</Item>
             <Item Key="setting.operatingMode">Email</Item>
             <Item Key="ContentDefinitionReferenceId">api.localaccountsignin</Item>
-            <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+            <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>            
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
           <InputClaims>

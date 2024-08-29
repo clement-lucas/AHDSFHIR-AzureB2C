@@ -1,8 +1,19 @@
-﻿<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="despenduserstg.onmicrosoft.com" PolicyId="B2C_1A_TrustFrameworkLocalization" PublicPolicyUri="http://despenduserstg.onmicrosoft.com/B2C_1A_TrustFrameworkLocalization" TenantObjectId="3aeb190f-6a56-41a5-becd-07d9a44025a9">
+﻿<TrustFrameworkPolicy 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" 
+  PolicySchemaVersion="0.3.0.0" 
+  TenantId="despenduserstg.onmicrosoft.com" 
+  PolicyId="B2C_1A_TrustFrameworkLocalization" 
+  PublicPolicyUri="http://despenduserstg.onmicrosoft.com/B2C_1A_TrustFrameworkLocalization" 
+  TenantObjectId="3aeb190f-6a56-41a5-becd-07d9a44025a9"
+  DeploymentMode = "Production">
+
   <BasePolicy>
     <TenantId>despenduserstg.onmicrosoft.com</TenantId>
     <PolicyId>B2C_1A_TrustFrameworkBase</PolicyId>
   </BasePolicy>
+
   <BuildingBlocks>
     <ContentDefinitions>
       <ContentDefinition Id="api.signuporsignin">
