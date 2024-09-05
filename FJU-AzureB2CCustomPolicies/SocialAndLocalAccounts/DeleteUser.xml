@@ -218,7 +218,7 @@
                 <Item Key="DebugMode">false</Item>  
             </Metadata>  
             <CryptographicKeys>  
-                <Key Id="ClientCertificate" StorageReferenceId="B2C_1A_DBWrapperApiClientCertificateTemp" />  
+                <Key Id="ClientCertificate" StorageReferenceId="B2C_1A_DBWrapperApiClientCertificate" />  
             </CryptographicKeys>  
             <InputClaims>  
                 <!-- Claims sent to REST API -->  

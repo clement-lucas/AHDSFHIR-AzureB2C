@@ -1,5 +1,4 @@
-// src/authConfig.js
-
+// src/authConfig.js  
 import { UserManager, WebStorageStateStore } from 'oidc-client';
 import appConfig from './appConfig';
 

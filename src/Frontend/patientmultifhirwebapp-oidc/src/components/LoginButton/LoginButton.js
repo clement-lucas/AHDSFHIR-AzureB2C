@@ -10,7 +10,10 @@ const LoginButton = ({ user, handleLogin, handleLogout, handleDeleteUser }) => (
                 <button onClick={handleDeleteUser}>Delete user</button>
             </>
         ) : (
-            <button onClick={handleLogin}>Login</button>
+            <>
+                <button onClick={() => handleLogin()}>Combined Login</button>
+                <button onClick={() => handleLogin('google.com')}>Google Login</button>
+            </>
         )}
     </div>
 );

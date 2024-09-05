@@ -68,8 +68,9 @@ const App = () => {
     }, [initialized]);
 
 
-    const handleLogin = () => {
-        signInSignUpManager.signinRedirect();
+    const handleLogin = (domainHint = '') => {
+        const extraQueryParams = domainHint ? { domain_hint: domainHint } : {};
+        signInSignUpManager.signinRedirect({ extraQueryParams });
     };
 
     const handleDeleteUser = () => {

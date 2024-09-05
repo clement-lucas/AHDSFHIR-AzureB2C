@@ -43,9 +43,11 @@
             <Item Key="client_id">04594b53-a85a-4a65-b9cf-24ee72899b45</Item>  
             <Item Key="IdTokenAudience">7702b3ca-b81e-4f82-a5df-44dab00ba0db</Item>  
           </Metadata>  
-          <InputClaims>  
+          <InputClaims>
             <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="04594b53-a85a-4a65-b9cf-24ee72899b45" />  
-            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="7702b3ca-b81e-4f82-a5df-44dab00ba0db" />  
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="7702b3ca-b81e-4f82-a5df-44dab00ba0db" />
+            <!-- Use the login_hint query parameter to directly fill-in the username in Sign-in/Sing-up page -->
+            <InputClaim ClaimTypeReferenceId="signInName" DefaultValue="{OIDC:LoginHint}" />
           </InputClaims>  
         </TechnicalProfile>  
       </TechnicalProfiles>  
@@ -69,7 +71,7 @@
             <Item Key="DebugMode">false</Item>
           </Metadata>
           <CryptographicKeys>
-            <Key Id="ClientCertificate" StorageReferenceId="B2C_1A_DBWrapperApiClientCertificateTemp" />
+            <Key Id="ClientCertificate" StorageReferenceId="B2C_1A_DBWrapperApiClientCertificate" />
           </CryptographicKeys>
           <InputClaims>
 			      <!-- Claims sent to REST API -->
@@ -87,6 +89,7 @@
     </ClaimsProvider>
 
     <ClaimsProvider>
+      <!-- Use the domain_hint query parameter to directly open this profile in Sign-in/Sing-up page -->
       <Domain>google.com</Domain>
       <DisplayName>Google</DisplayName>
       <TechnicalProfiles>
@@ -106,6 +109,10 @@
           <CryptographicKeys>
             <Key Id="client_secret" StorageReferenceId="B2C_1A_GoogleSecret" />
           </CryptographicKeys>
+          <InputClaims>            
+            <!-- Use the login_hint query parameter to directly fill-in the username in Sign-in/Sing-up page -->
+            <InputClaim ClaimTypeReferenceId="signInName" DefaultValue="{OIDC:LoginHint}" />
+          </InputClaims>          
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="issuerUserId" PartnerClaimType="id" />
             <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="email" />
@@ -127,6 +134,7 @@
     </ClaimsProvider>
 
     <ClaimsProvider>
+      <!-- Use the domain_hint query parameter to directly open this profile in Sign-in/Sing-up page -->
       <Domain>apple.com</Domain>
       <DisplayName>Apple</DisplayName>
       <TechnicalProfiles>
@@ -151,6 +159,10 @@
           <CryptographicKeys>
             <Key Id="client_secret" StorageReferenceId="B2C_1A_AppleSecret20240716"/>
           </CryptographicKeys>
+          <InputClaims>            
+            <!-- Use the login_hint query parameter to directly fill-in the username in Sign-in/Sing-up page -->
+            <InputClaim ClaimTypeReferenceId="signInName" DefaultValue="{OIDC:LoginHint}" />
+          </InputClaims>          
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="issuerUserId" PartnerClaimType="sub" />
             <OutputClaim ClaimTypeReferenceId="identityProvider" DefaultValue="https://appleid.apple.com" AlwaysUseDefaultValue="true" />

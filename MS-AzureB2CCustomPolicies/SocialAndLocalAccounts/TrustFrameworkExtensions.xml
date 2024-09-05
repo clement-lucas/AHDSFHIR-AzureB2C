@@ -50,7 +50,9 @@
           </Metadata>  
           <InputClaims>  
             <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="e218b9d7-7ede-4a49-b50e-a317f039ce22" />  
-            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="9350d94e-3a16-46d2-81f8-9181e11ef463" />  
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="9350d94e-3a16-46d2-81f8-9181e11ef463" />
+            <!-- Use the login_hint query parameter to directly fill-in the username in Sign-in/Sing-up page -->
+            <InputClaim ClaimTypeReferenceId="signInName" DefaultValue="{OIDC:LoginHint}" />          
           </InputClaims>  
         </TechnicalProfile>  
       </TechnicalProfiles>  
@@ -125,6 +127,7 @@
     </ClaimsProvider>
 
     <ClaimsProvider>
+      <!-- Use the domain_hint query parameter to directly open this profile in Sign-in/Sing-up page -->
       <Domain>google.com</Domain>
       <DisplayName>Google</DisplayName>
       <TechnicalProfiles>
@@ -144,6 +147,10 @@
           <CryptographicKeys>
             <Key Id="client_secret" StorageReferenceId="B2C_1A_GoogleSecret" />
           </CryptographicKeys>
+          <InputClaims>            
+            <!-- Use the login_hint query parameter to directly fill-in the username in Sign-in/Sing-up page -->
+            <InputClaim ClaimTypeReferenceId="signInName" DefaultValue="{OIDC:LoginHint}" />
+          </InputClaims>
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="issuerUserId" PartnerClaimType="id" />
             <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="email" />
