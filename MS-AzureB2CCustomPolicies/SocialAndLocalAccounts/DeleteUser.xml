@@ -15,7 +15,15 @@
   </BasePolicy>
 
   <BuildingBlocks>
+    
     <ClaimsSchema>
+      
+      <ClaimType Id="status">
+        <DisplayName>Status</DisplayName>  
+        <DataType>string</DataType>
+        <UserHelpText>Status of deleting FHIR User in FHIR services</UserHelpText>  
+      </ClaimType>
+    
       <!--Sample: Stores the message to dispaly to the user-->
       <ClaimType Id="userMessage">
         <DisplayName />
@@ -38,6 +46,7 @@
         <DataType>string</DataType>
         <UserInputType>Readonly</UserInputType>
       </ClaimType>
+
     </ClaimsSchema>
 
     <ClaimsTransformations>
@@ -118,6 +127,7 @@
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
       </TechnicalProfiles>
+
     </ClaimsProvider>
 
     <ClaimsProvider>
@@ -125,7 +135,7 @@
       <TechnicalProfiles>
         <!--Sample: Display the welcome page-->
         <TechnicalProfile Id="SelfAsserted-Welcome">
-          <DisplayName>Welcome to FIDO enrollment</DisplayName>
+          <DisplayName>Display the welcome page</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
@@ -147,7 +157,7 @@
 
         <!--Sample: Display the your account has been deleted message-->
         <TechnicalProfile Id="SelfAsserted-AccountHasBeenDeleted">
-          <DisplayName>Welcome to FIDO enrollment</DisplayName>
+          <DisplayName>Display Account Delete Message</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
@@ -171,7 +181,7 @@
 
         <!--Sample: Display user not found error message message-->
         <TechnicalProfile Id="SelfAsserted-UserNotFound">
-          <DisplayName>Welcome to FIDO enrollment</DisplayName>
+          <DisplayName>Display User not found Message</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
@@ -191,8 +201,42 @@
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
+
+    <ClaimsProvider>  
+      <DisplayName>REST-DeleteUserAPI</DisplayName>  
+      <TechnicalProfiles>  
+          <TechnicalProfile Id="REST-DeleteUserAPI">  
+            <DisplayName>Delete User API</DisplayName>  
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />  
+            <Metadata>  
+                <Item Key="ServiceUrl">https://smart-on-fhir-authhandler-func.azurewebsites.net/api/DeleteFHIRUserStub?code=xyvjwZgnqDBHr5Hm_SVnJKUc8x0fBL90BMh0PV54vf7JAzFuFrBSAQ%3D%3D</Item>  
+                <Item Key="SendClaimsIn">Body</Item>  
+                <!-- Set AuthenticationType to Basic or ClientCertificate in production environments -->  
+                <Item Key="AuthenticationType">ClientCertificate</Item>  
+                <!-- REMOVE the following line in production environments -->  
+                <Item Key="AllowInsecureAuthInProduction">false</Item>  
+                <Item Key="DebugMode">false</Item>  
+            </Metadata>  
+            <CryptographicKeys>  
+                <Key Id="ClientCertificate" StorageReferenceId="B2C_1A_RestApiClientCertificate" />  
+            </CryptographicKeys>  
+            <InputClaims>  
+                <!-- Claims sent to REST API -->  
+                <InputClaim ClaimTypeReferenceId="objectId" />  
+            </InputClaims>  
+            <OutputClaims>  
+                <!-- Claims parsed from REST API if needed -->
+                <OutputClaim ClaimTypeReferenceId="objectId" />  
+                <OutputClaim ClaimTypeReferenceId="status" /> 
+            </OutputClaims>
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />  
+          </TechnicalProfile>  
+      </TechnicalProfiles>  
+    </ClaimsProvider>
+
   </ClaimsProviders>
   <UserJourneys>
+
     <UserJourney Id="DeleteAccount">
       <OrchestrationSteps>
 
@@ -261,19 +305,27 @@
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <!-- Sample: This step present the account has been deleted message -->
+        <!-- Call the REST API to delete Patient/User details in FHIR service -->  
         <OrchestrationStep Order="7" Type="ClaimsExchange">
+          <ClaimsExchanges>
+              <ClaimsExchange Id="REST-DeleteUserAPI" TechnicalProfileReferenceId="REST-DeleteUserAPI" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Sample: This step present the account has been deleted message -->
+        <OrchestrationStep Order="8" Type="ClaimsExchange">
           <ClaimsExchanges>
             <ClaimsExchange Id="SelfAsserted-AccountHasBeenDeleted" TechnicalProfileReferenceId="SelfAsserted-AccountHasBeenDeleted" />
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <OrchestrationStep Order="8" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        <OrchestrationStep Order="9" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
 
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>
   </UserJourneys>
+  
   <RelyingParty>
     <DefaultUserJourney ReferenceId="DeleteAccount" />
     <TechnicalProfile Id="PolicyProfile">
@@ -285,6 +337,7 @@
         <OutputClaim ClaimTypeReferenceId="surname" />
         <OutputClaim ClaimTypeReferenceId="email" />
         <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub" />
+        <OutputClaim ClaimTypeReferenceId="status" />
         <OutputClaim ClaimTypeReferenceId="identityProvider" />
         <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
       </OutputClaims>
