@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Npgsql;
 using HL_AHDSFHIR_AuthHandlerFunction.lib;
+using Microsoft.Identity.Client;
 
 namespace HL_AHDSFHIR_AuthHandlerFunction
 {
@@ -23,10 +24,67 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
             string invocationId = context.InvocationId.ToString();
             logger.LogInformation($"start GetFHIRUser request. Id={invocationId}");
             try{
+
+                // クライアント証明書を取得
+                var clientCert = req.HttpContext.Connection.ClientCertificate;
+                if (clientCert == null)
+                {
+                    logger.LogError($"Client certificate is not found. Id={invocationId}");
+                    return new UnauthorizedResult();
+                }
+
+                // 許可する証明書のサムプリントを環境変数から csv 形式で取得して配列に格納
+                string[] allowedThumbprints = Environment.GetEnvironmentVariable("ALLOWED_THUMBPRINTS").Split(',');
+                logger.LogInformation($"clientCert.NotBefore={clientCert.NotBefore} Id={invocationId}");
+                logger.LogInformation($"clientCert.NotAfter={clientCert.NotAfter} Id={invocationId}");
+
+                // 証明書のサムプリントを検証
+                if (Array.Exists(allowedThumbprints, thumbprint => thumbprint.Equals(clientCert.Thumbprint, StringComparison.OrdinalIgnoreCase)))
+                {
+                    // 証明書が有効
+                }
+                else
+                {
+                    // 証明書が無効な場合の処理
+                    logger.LogError($"Client certificate is not allowed. Id={invocationId}");
+                    // status code 403 を返す
+                    return new StatusCodeResult(StatusCodes.Status403Forbidden);
+                }
+
+                // Validate NotBefore and NotAfter
+                var dateTimeNow = DateTime.UtcNow;
+                int adjustDay = 0;
+                // 環境変数から現在日の調整値を取得
+                // この値は本番では必ず0に設定すること
+                if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CLIENT_CERTIFICATE_DATETIME_ADJUST_DAYS")))
+                {
+                    adjustDay = int.Parse(Environment.GetEnvironmentVariable("CLIENT_CERTIFICATE_DATETIME_ADJUST_DAYS"));
+                    if (adjustDay != 0)
+                    {
+                        logger.LogError($"Application Setting value of CLIENT_CERTIFICATE_DATETIME_ADJUST_DAYS is {adjustDay}. In production, this value should be 0. Id={invocationId}");
+                    }
+                }
+                dateTimeNow = dateTimeNow.AddDays(adjustDay);
+                logger.LogInformation($"dateTimeNow={dateTimeNow} Id={invocationId}");
+
+                if (DateTime.Compare(dateTimeNow, clientCert.NotBefore) < 0
+                            || DateTime.Compare(dateTimeNow, clientCert.NotAfter) > 0)
+                {
+                    logger.LogError($"Client certificate is not valid. Id={invocationId}");
+                    return new StatusCodeResult(StatusCodes.Status403Forbidden);
+                }
+
                 // Read the request body  
                 var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 // Log the request body data  
                 logger.LogInformation($"Request Body: {requestBody}, Id={invocationId}");
+
+                // request body が存在しない場合は 400 Bad request を返す
+                if (string.IsNullOrEmpty(requestBody))
+                {
+                    return new BadRequestObjectResult("Request body is empty.");
+                }
+
                 // Parse the request body as a JSON object  
                 JObject data = JObject.Parse(requestBody);
                 // Extract objectId from the request body  
@@ -48,8 +106,6 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
                 var connectionString = SQLManagement.GetConnectionString(logger, invocationId);
                 var retryInterval = SQLManagement.GetRetryInterval(logger, invocationId);
                 var retryCount = SQLManagement.GetRetryCount(logger, invocationId);
-                logger.LogInformation($"retryInterval: {retryInterval}");
-                logger.LogInformation($"retryCount: {retryCount}");
                 var resFacilityCode = "";
                 var resPatientResourceId = "";
                 var resFHIRServiceUrl = "";
@@ -142,3 +198,5 @@ namespace HL_AHDSFHIR_AuthHandlerFunction
         }
     }
 }
+
+

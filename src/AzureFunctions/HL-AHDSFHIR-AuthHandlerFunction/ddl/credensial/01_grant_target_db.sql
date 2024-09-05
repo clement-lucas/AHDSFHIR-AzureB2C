@@ -8,9 +8,6 @@ DECLARE
 BEGIN
   EXECUTE 'GRANT usage ON SCHEMA common TO ' || quote_ident(app_name) || ';';
   EXECUTE 'GRANT SELECT ON common.m_fhir_server TO ' || quote_ident(app_name) || ';';
-  EXECUTE 'GRANT SELECT ON common.m_fhir_scope_master TO ' || quote_ident(app_name) || ';';
   EXECUTE 'GRANT usage ON SCHEMA users TO ' || quote_ident(app_name) || ';';
-  EXECUTE 'GRANT SELECT ON users.m_patient_fhir_scope_default TO ' || quote_ident(app_name) || ';';
-  EXECUTE 'GRANT SELECT ON users.m_patient_fhir_scope_management TO ' || quote_ident(app_name) || ';';
   EXECUTE 'GRANT SELECT ON users.m_patient_link_management TO ' || quote_ident(app_name) || ';';
 END $$;
