@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HL-AHDSFHIR-AuthHandlerFunc
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientsinglefhirwebapp", "Frontend\patientsinglefhirwebapp\patientsinglefhirwebapp.esproj", "{50899FD9-43F1-4DD4-BEF8-16BC9A150845}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientmultifhirwebapp", "Frontend\patientmultifhirwebapp\patientmultifhirwebapp.esproj", "{0FADA343-9C98-45B0-AB79-5AB6ED64FE8F}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientmultifhirwebapp-msal", "Frontend\patientmultifhirwebapp-msal\patientmultifhirwebapp-msal.esproj", "{0FADA343-9C98-45B0-AB79-5AB6ED64FE8F}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "patientmultifhirwebapp-oidc", "Frontend\patientmultifhirwebapp-oidc\patientmultifhirwebapp-oidc.esproj", "{0FADA343-9C98-45B0-AB79-5AB6ED64FE8G}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
