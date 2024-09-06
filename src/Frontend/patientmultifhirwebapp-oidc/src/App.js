@@ -20,6 +20,8 @@ const App = () => {
     useEffect(() => {
         const handleUserLoad = (user) => {
             console.log('User loaded', user);
+            const decodedToken = jwtDecode(user.id_token);
+            console.log('User ID Token decoded:', decodedToken);
             setUser(user);
         };
 

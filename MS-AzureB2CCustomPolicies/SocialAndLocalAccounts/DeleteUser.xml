@@ -7,7 +7,7 @@
   TenantId="uvancehlpfdemo.onmicrosoft.com"
   PolicyId="B2C_1A_DeleteUser"
   PublicPolicyUri="http://uvancehlpfdemo.onmicrosoft.com/B2C_1A_DeleteUser"
-  DeploymentMode = "Development">
+  DeploymentMode = "Production">
 
   <BasePolicy>
     <TenantId>uvancehlpfdemo.onmicrosoft.com</TenantId>
@@ -96,6 +96,7 @@
         </OutputClaims>
       </ClaimsTransformation>
     </ClaimsTransformations>
+
   </BuildingBlocks>
 
   <ClaimsProviders>
@@ -127,13 +128,12 @@
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
       </TechnicalProfiles>
-
     </ClaimsProvider>
 
     <ClaimsProvider>
       <DisplayName>Self-Asserted</DisplayName>
       <TechnicalProfiles>
-        <!--Sample: Display the welcome page-->
+        <!-- Sample: Display the welcome page -->
         <TechnicalProfile Id="SelfAsserted-Welcome">
           <DisplayName>Display the welcome page</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
@@ -155,7 +155,7 @@
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
 
-        <!--Sample: Display the your account has been deleted message-->
+        <!-- Sample: Display your account has been deleted message -->
         <TechnicalProfile Id="SelfAsserted-AccountHasBeenDeleted">
           <DisplayName>Display Account Delete Message</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
@@ -235,14 +235,15 @@
     </ClaimsProvider>
 
   </ClaimsProviders>
+
   <UserJourneys>
 
     <UserJourney Id="DeleteAccount">
       <OrchestrationSteps>
 
         <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
-          <ClaimsProviderSelections>            
-            <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
+          <ClaimsProviderSelections>
+          <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
             <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
           </ClaimsProviderSelections>
           <ClaimsExchanges>
@@ -324,8 +325,9 @@
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>
+
   </UserJourneys>
-  
+
   <RelyingParty>
     <DefaultUserJourney ReferenceId="DeleteAccount" />
     <TechnicalProfile Id="PolicyProfile">

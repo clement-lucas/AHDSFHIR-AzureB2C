@@ -32,4 +32,4 @@ const PatientInfo = ({ facility, patientData }) => {
     );
 };
 
-export default PatientInfo;  
+export default PatientInfo;

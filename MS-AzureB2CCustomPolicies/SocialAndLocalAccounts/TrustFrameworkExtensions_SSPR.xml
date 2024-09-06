@@ -28,6 +28,12 @@
         <UserHelpText>The FHIR user URL.</UserHelpText>  
       </ClaimType>
 
+      <ClaimType Id="isForgotPassword">
+        <DisplayName>Indicates whether the user selected Forgot Password</DisplayName>
+        <DataType>boolean</DataType>
+        <AdminHelpText></AdminHelpText>
+      </ClaimType>
+
     </ClaimsSchema>
 
   </BuildingBlocks>
@@ -37,6 +43,7 @@
     <ClaimsProvider>  
       <DisplayName>Local Account SignIn</DisplayName>  
       <TechnicalProfiles>
+
         <TechnicalProfile Id="login-NonInteractive">  
           <Metadata>  
             <Item Key="client_id">e218b9d7-7ede-4a49-b50e-a317f039ce22</Item>  
@@ -48,18 +55,34 @@
             <!-- Use the login_hint query parameter to directly fill-in the username in Sign-in/Sing-up page -->
             <InputClaim ClaimTypeReferenceId="signInName" DefaultValue="{OIDC:LoginHint}" />          
           </InputClaims>
-          <OutputClaims>
+          <OutputClaims>            
             <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="email" />            
           </OutputClaims>
         </TechnicalProfile>
-        <!-- Hide the Forgot password link -->
+
+        <!-- Set the isForgotPassword to true-->
+        <TechnicalProfile Id="ForgotPassword">
+          <DisplayName>Forgot your password?</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.ClaimsTransformationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="isForgotPassword" DefaultValue="true" AlwaysUseDefaultValue="true" />
+          </OutputClaims>
+        </TechnicalProfile>
+
+        <!-- Update the sign-up or sign-in page with forgot password link target ClaimsExchange -->
         <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
           <Metadata>
-            <Item Key="setting.forgotPasswordLinkLocation">None</Item>
+            <Item Key="setting.forgotPasswordLinkOverride">ForgotPasswordExchange</Item>
           </Metadata>
         </TechnicalProfile>
+
+        <!-- Adding the required session manager -->
+        <TechnicalProfile Id="LocalAccountWritePasswordUsingObjectId">
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+
       </TechnicalProfiles>  
-    </ClaimsProvider>
+    </ClaimsProvider> 
 
     <!-- The following Technical profile is for calling REST API to receive facilityCode and fhirUser claims -->
     <ClaimsProvider>  
@@ -254,7 +277,8 @@
         <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
           <ClaimsProviderSelections>
             <ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
-            <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />       
+            <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
+            <ClaimsProviderSelection TargetClaimsExchangeId="ForgotPasswordExchange" />         
           </ClaimsProviderSelections>
           <ClaimsExchanges>
             <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
@@ -272,11 +296,25 @@
           <ClaimsExchanges>
             <ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAuth2" />
             <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail" />
+            <ClaimsExchange Id="ForgotPasswordExchange" TechnicalProfileReferenceId="ForgotPassword" />
           </ClaimsExchanges>
         </OrchestrationStep>
 
+        <!-- Check if the user has selected Forgot Password link and invoke sub journey -->
+        <OrchestrationStep Order="3" Type="InvokeSubJourney">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+              <Value>isForgotPassword</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <JourneyList>
+            <Candidate SubJourneyReferenceId="PasswordReset" />
+          </JourneyList>
+        </OrchestrationStep>
+
         <!-- For social IDP authentication, attempt to find the user account in the directory. -->
-        <OrchestrationStep Order="3" Type="ClaimsExchange">
+        <OrchestrationStep Order="4" Type="ClaimsExchange">
           <Preconditions>
             <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
               <Value>authenticationSource</Value>
@@ -292,7 +330,7 @@
         <!-- Show self-asserted page only if the directory does not have the user account already (i.e. we do not have an objectId). 
           This can only happen when authentication happened using a social IDP. If local account was created or authentication done
           using ESTS in step 2, then an user account must exist in the directory by this time. -->
-        <OrchestrationStep Order="4" Type="ClaimsExchange">
+        <OrchestrationStep Order="5" Type="ClaimsExchange">
           <Preconditions>
             <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
               <Value>objectId</Value>
@@ -306,7 +344,7 @@
 
         <!-- This step reads any user attributes that we may not have received when authenticating using ESTS so they can be sent 
           in the token. -->
-        <OrchestrationStep Order="5" Type="ClaimsExchange">
+        <OrchestrationStep Order="6" Type="ClaimsExchange">
           <Preconditions>
             <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
               <Value>authenticationSource</Value>
@@ -322,7 +360,7 @@
         <!-- The previous step (SelfAsserted-Social) could have been skipped if there were no attributes to collect 
              from the user. So, in that case, create the user in the directory if one does not already exist 
              (verified using objectId which would be set from the last step if account was created in the directory. -->
-        <OrchestrationStep Order="6" Type="ClaimsExchange">
+        <OrchestrationStep Order="7" Type="ClaimsExchange">
           <Preconditions>
             <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
               <Value>objectId</Value>
@@ -335,7 +373,7 @@
         </OrchestrationStep>
 
         <!-- Add the REST API call step to fetch fhirUser based on objectId and facilityCode -->
-        <OrchestrationStep Order="7" Type="ClaimsExchange">
+        <OrchestrationStep Order="8" Type="ClaimsExchange">
           <Preconditions>
             <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
               <Value>objectId</Value>
@@ -355,7 +393,7 @@
           </ClaimsExchanges>
         </OrchestrationStep> -->
 
-        <OrchestrationStep Order="8" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        <OrchestrationStep Order="9" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
 
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />

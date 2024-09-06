@@ -133,7 +133,7 @@
     <ClaimsProvider>
       <DisplayName>Self-Asserted</DisplayName>
       <TechnicalProfiles>
-        <!--Sample: Display the welcome page -->
+        <!-- Sample: Display the welcome page -->
         <TechnicalProfile Id="SelfAsserted-Welcome">
           <DisplayName>Display the welcome page</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
