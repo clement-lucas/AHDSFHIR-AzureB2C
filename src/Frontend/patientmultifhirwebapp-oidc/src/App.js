@@ -72,8 +72,15 @@ const App = () => {
 
     const handleLogin = (domainHint = '') => {
         const extraQueryParams = domainHint ? { domain_hint: domainHint } : {};
-        signInSignUpManager.signinRedirect({ extraQueryParams });
+        signInSignUpManager.signinRedirect({ extraQueryParams })
+            .then(() => {
+                console.log('Signin redirect initiated successfully');
+            })
+            .catch(error => {
+                console.error('Error initiating signin redirect', error);
+            });
     };
+
 
     const handleDeleteUser = () => {
         if (user && user.profile && user.profile.sub) {

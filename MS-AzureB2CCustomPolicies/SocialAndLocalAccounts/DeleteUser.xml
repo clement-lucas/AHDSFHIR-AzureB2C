@@ -7,7 +7,7 @@
   TenantId="uvancehlpfdemo.onmicrosoft.com"
   PolicyId="B2C_1A_DeleteUser"
   PublicPolicyUri="http://uvancehlpfdemo.onmicrosoft.com/B2C_1A_DeleteUser"
-  DeploymentMode = "Production">
+  DeploymentMode = "Development">
 
   <BasePolicy>
     <TenantId>uvancehlpfdemo.onmicrosoft.com</TenantId>

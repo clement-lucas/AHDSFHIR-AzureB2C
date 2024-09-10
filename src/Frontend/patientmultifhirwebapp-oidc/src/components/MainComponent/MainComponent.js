@@ -24,7 +24,7 @@ function MainComponent({ user, error, handleLogin, handleLogout, handleDeleteUse
                     {user && (
                         <div className="user-info">
                             <span>Logged-in as: {user.profile.name}</span>
-                            <span>Email: {email}</span>
+                            {/* <span>Email: {email}</span> */}
                         </div>
                     )}
                     {error && <ErrorMessage error={error} />}
