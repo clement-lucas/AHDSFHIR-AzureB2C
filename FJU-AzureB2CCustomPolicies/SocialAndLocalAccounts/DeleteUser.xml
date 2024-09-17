@@ -7,7 +7,7 @@
   TenantId="despenduserstg.onmicrosoft.com" 
   PolicyId="B2C_1A_DeleteUser" 
   PublicPolicyUri="http://despenduserstg.onmicrosoft.com/B2C_1A_DeleteUser"
-  DeploymentMode = "Production">
+  DeploymentMode = "Development">
 
   <BasePolicy>
     <TenantId>despenduserstg.onmicrosoft.com</TenantId>
@@ -133,7 +133,7 @@
     <ClaimsProvider>
       <DisplayName>Self-Asserted</DisplayName>
       <TechnicalProfiles>
-        <!-- Sample: Display the welcome page -->
+        <!--Sample: Display the welcome page -->
         <TechnicalProfile Id="SelfAsserted-Welcome">
           <DisplayName>Display the welcome page</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
@@ -157,7 +157,7 @@
 
         <!--Sample: Display your account has been deleted message-->
         <TechnicalProfile Id="SelfAsserted-AccountHasBeenDeleted">
-          <DisplayName>Display Account Delete Message</DisplayName>
+          <DisplayName> Display Account Delete Message</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>

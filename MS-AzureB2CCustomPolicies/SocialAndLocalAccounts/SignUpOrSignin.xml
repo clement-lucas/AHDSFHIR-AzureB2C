@@ -8,6 +8,7 @@
   PolicyId="B2C_1A_signup_signin"
   PublicPolicyUri="http://uvancehlpfdemo.onmicrosoft.com/B2C_1A_signup_signin"
   DeploymentMode = "Development">
+  <!-- Set the Deployment mode to "Production" in production environments -->
 
   <BasePolicy>
     <TenantId>uvancehlpfdemo.onmicrosoft.com</TenantId>
@@ -33,6 +34,8 @@
         <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub"/>
         <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="oid"/>
         <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
+        <OutputClaim ClaimTypeReferenceId="identityProviderAccessToken" PartnerClaimType="idp_access_token"/>
+        <OutputClaim ClaimTypeReferenceId="identityProvider"/>
         <!-- <OutputClaim ClaimTypeReferenceId="scope" /> -->
       </OutputClaims>
       <SubjectNamingInfo ClaimType="sub" />

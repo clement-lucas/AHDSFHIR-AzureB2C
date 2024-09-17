@@ -7,7 +7,7 @@
   PolicyId="B2C_1A_TrustFrameworkLocalization" 
   PublicPolicyUri="http://despenduserstg.onmicrosoft.com/B2C_1A_TrustFrameworkLocalization" 
   TenantObjectId="3aeb190f-6a56-41a5-becd-07d9a44025a9"
-  DeploymentMode = "Production">
+  DeploymentMode = "Development">
 
   <BasePolicy>
     <TenantId>despenduserstg.onmicrosoft.com</TenantId>

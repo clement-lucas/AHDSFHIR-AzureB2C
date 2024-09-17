@@ -8,6 +8,7 @@
   PolicyId="B2C_1A_TrustFrameworkLocalization" 
   PublicPolicyUri="http://uvancehlpfdemo.onmicrosoft.com/B2C_1A_TrustFrameworkLocalization"
   DeploymentMode = "Development">
+    <!-- Set the Deployment mode to "Production" in production environments -->
 
   <BasePolicy>
     <TenantId>uvancehlpfdemo.onmicrosoft.com</TenantId>

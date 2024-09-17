@@ -8,6 +8,7 @@
   PolicyId="B2C_1A_TrustFrameworkBase"
   PublicPolicyUri="http://uvancehlpfdemo.onmicrosoft.com/B2C_1A_TrustFrameworkBase"
   DeploymentMode = "Development">
+  <!-- Set the Deployment mode to "Production" in production environments -->
 
   <BuildingBlocks>
     <ClaimsSchema>

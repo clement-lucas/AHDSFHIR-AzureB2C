@@ -7,7 +7,7 @@
   TenantId="despenduserstg.onmicrosoft.com"
   PolicyId="B2C_1A_TrustFrameworkBase"
   PublicPolicyUri="http://despenduserstg.onmicrosoft.com/B2C_1A_TrustFrameworkBase"
-  DeploymentMode = "Production">
+  DeploymentMode = "Development">
 
   <BuildingBlocks>
     <ClaimsSchema>

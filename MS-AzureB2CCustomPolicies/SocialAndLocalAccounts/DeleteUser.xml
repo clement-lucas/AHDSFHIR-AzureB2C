@@ -8,6 +8,7 @@
   PolicyId="B2C_1A_DeleteUser"
   PublicPolicyUri="http://uvancehlpfdemo.onmicrosoft.com/B2C_1A_DeleteUser"
   DeploymentMode = "Development">
+<!-- Set the Deployment mode to "Production" in production environments -->
 
   <BasePolicy>
     <TenantId>uvancehlpfdemo.onmicrosoft.com</TenantId>
@@ -179,7 +180,7 @@
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
 
-        <!--Sample: Display user not found error message message-->
+        <!--Sample: Display user not found error message -->
         <TechnicalProfile Id="SelfAsserted-UserNotFound">
           <DisplayName>Display User not found Message</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
@@ -215,7 +216,7 @@
                 <Item Key="AuthenticationType">ClientCertificate</Item>  
                 <!-- REMOVE the following line in production environments -->  
                 <Item Key="AllowInsecureAuthInProduction">false</Item>  
-                <Item Key="DebugMode">false</Item>  
+                <Item Key="DebugMode">true</Item>
             </Metadata>  
             <CryptographicKeys>  
                 <Key Id="ClientCertificate" StorageReferenceId="B2C_1A_RestApiClientCertificate" />  
