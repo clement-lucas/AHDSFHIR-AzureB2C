@@ -1,8 +1,8 @@
-REACT_APP_AUTHORITY_URL=https://smart-on-fhir-server-apim.azure-api.net/private/signinauth
+REACT_APP_AUTHORITY_URL=https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin/v2.0
 REACT_APP_CLIENT_ID=661862bb-946b-4580-8bec-b7ae75905ab6
 REACT_APP_REDIRECT_URL=https://nice-ocean-037d7eb00.5.azurestaticapps.net
 REACT_APP_HOME_URL=https://nice-ocean-037d7eb00.5.azurestaticapps.net
-REACT_APP_TOKEN_URL=https://smart-on-fhir-server-apim.azure-api.net/private/signintoken
+REACT_APP_TOKEN_URL=https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/token
 REACT_APP_OIDC_LOGINSCOPE=openid,profile,email
 REACT_APP_OIDC_DELETEUSERSCOPE=openid,profile,email
 REACT_APP_REFRESHTOKEN_SCOPE=openid,offline_access,https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.Patient.read,https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation

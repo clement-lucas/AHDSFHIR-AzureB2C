@@ -13,6 +13,7 @@ const LoginButton = ({ user, handleLogin, handleLogout, handleDeleteUser }) => (
             <>
                 <button onClick={() => handleLogin()}>Combined Login</button>
                 <button onClick={() => handleLogin('google.com')}>Google Login</button>
+                <button onClick={() => handleLogin('apple.com')}>Apple Login</button>
             </>
         )}
     </div>
