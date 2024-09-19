@@ -103,8 +103,8 @@
             <!-- Set AuthenticationType to Basic or ClientCertificate in production environments -->
             <Item Key="AuthenticationType">ClientCertificate</Item>
             <!-- REMOVE the following line in production environments -->
-            <Item Key="AllowInsecureAuthInProduction">false</Item>
-            <Item Key="DebugMode">false</Item>
+            <Item Key="AllowInsecureAuthInProduction">true</Item>
+            <Item Key="DebugMode">true</Item>
           </Metadata>
           <CryptographicKeys>
             <Key Id="ClientCertificate" StorageReferenceId="B2C_1A_DBWrapperApiClientCertificate" />
