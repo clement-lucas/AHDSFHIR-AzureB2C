@@ -34,6 +34,13 @@
         <DataType>boolean</DataType>
         <AdminHelpText></AdminHelpText>
       </ClaimType>
+
+      <ClaimType Id="trustFrameworkPolicy">
+        <DisplayName>trustFrameworkPolicy</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>Name of the custom policy.</AdminHelpText>
+      </ClaimType>
+
     </ClaimsSchema>
 
   </BuildingBlocks>
@@ -141,7 +148,7 @@
           <InputClaims>            
             <!-- Use the login_hint query parameter to directly fill-in the username in Sign-in/Sing-up page -->
             <InputClaim ClaimTypeReferenceId="signInName" DefaultValue="{OIDC:LoginHint}" />
-          </InputClaims>          
+          </InputClaims>
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="issuerUserId" PartnerClaimType="id" />
             <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="email" />

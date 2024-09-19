@@ -1,8 +1,8 @@
-export const returnURL = (window.location.host.includes("localhost") ? "http://localhost:3000" : "https://wonderful-island-0a2864600-preview.eastasia.5.azurestaticapps.net");
+export const returnURL = (window.location.host.includes("localhost") ? "http://localhost:3000" : "https://wonderful-island-0a2864600.5.azurestaticapps.net");
 
 export const msalConfig = {
     auth: {
-        clientId: "9ca401fb-2730-4c00-8b24-4738a1b4c539",
+        clientId: "661862bb-946b-4580-8bec-b7ae75905ab6",
         authority: "https://uvancehlpfdemo.b2clogin.com/uvancehlpfdemo.onmicrosoft.com/b2c_1_userflow_sign-up_sign-in", // Replace with your B2C sign-up/sign-in policy  
         knownAuthorities: [
             "https://uvancehlpfdemo.b2clogin.com",
@@ -20,7 +20,7 @@ export const msalConfig = {
 };
 
 export const loginRequest = {
-    scopes: ["openid", "profile", "https://uvancehlpfdemo.onmicrosoft.com/9ca401fb-2730-4c00-8b24-4738a1b4c539/patient.all.read"],
+    scopes: ["openid", "profile", "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/user_impersonation", "https://uvancehlpfdemo.onmicrosoft.com/661862bb-946b-4580-8bec-b7ae75905ab6/patient.all.read"],
 };
 
 export const b2cPolicies = {

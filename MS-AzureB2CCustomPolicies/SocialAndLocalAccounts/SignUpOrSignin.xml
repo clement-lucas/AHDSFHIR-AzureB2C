@@ -35,7 +35,8 @@
         <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="oid"/>
         <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
         <OutputClaim ClaimTypeReferenceId="identityProviderAccessToken" PartnerClaimType="idp_access_token"/>
-        <OutputClaim ClaimTypeReferenceId="identityProvider"/>
+        <OutputClaim ClaimTypeReferenceId="identityProvider" PartnerClaimType="idp"/>
+        <OutputClaim ClaimTypeReferenceId="trustFrameworkPolicy" Required="true" DefaultValue="{policy}" PartnerClaimType="tfp"/>
         <!-- <OutputClaim ClaimTypeReferenceId="scope" /> -->
       </OutputClaims>
       <SubjectNamingInfo ClaimType="sub" />
