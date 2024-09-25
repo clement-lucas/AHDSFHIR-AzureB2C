@@ -31,20 +31,20 @@ const App = () => {
         };
 
         const handleRedirectCallback = () => {
-            if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
-                signInSignUpManager.signinRedirectCallback().then(user => {
-                    console.log('User signin redirect successful');
-                    setUser(user);
-                    if (!initialized) {
-                        fetchAllPatientData(user.refresh_token);
-                        setInitialized(true);
-                    }
-                    // Clear the URL parameters  
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }).catch(error => {
-                    console.error('Error handling redirect callback', error);
-                });
-            }
+            //if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
+            signInSignUpManager.signinRedirectCallback().then(user => {
+                console.log('User signin redirect successful');
+                setUser(user);
+                if (!initialized) {
+                    fetchAllPatientData(user.refresh_token);
+                    setInitialized(true);
+                }
+                // Clear the URL parameters  
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }).catch(error => {
+                console.error('Error handling redirect callback', error);
+            });
+            //}
         };
 
         handleRedirectCallback();
